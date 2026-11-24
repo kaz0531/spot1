@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPOT1 | 今すぐ1〜3時間だけつながるスポット業務マッチング</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            },
+            slate: {
+              850: '#172033',
+              950: '#0a0f1c',
+            }
+          },
+          boxShadow: {
+            'subtle': '0 1px 2px 0 rgba(15, 23, 42, 0.04)',
+            'card': '0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04)',
+            'float': '0 12px 28px -6px rgba(15, 23, 42, 0.12), 0 4px 10px -4px rgba(15, 23, 42, 0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-slate-900 selection:bg-brand-100 selection:text-brand-900">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-6">
+        <button onclick="navigate('home')" class="flex items-center gap-2.5 text-left group focus:outline-none">
+          <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm tracking-tight group-hover:bg-brand-600 transition-colors">
+            S1
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-bold text-lg tracking-tight text-slate-900">SPOT1</span>
+            <span class="hidden md:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200/70">
+              即時1〜3時間マッチング
+            </span>
+          </div>
+        </button>
+
+        <!-- Primary Nav -->
+        <nav class="hidden sm:flex items-center gap-1" id="desktop-nav"></nav>
+      </div>
+
+      <!-- Right Controls: Role Switcher & Engineering Docs -->
+      <div class="flex items-center gap-2.5">
+        <button onclick="toggleDocsModal(true)" class="hidden lg:inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+          <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          設計書 & 開発レポート
+        </button>
+
+        <!-- Role Switcher Pill -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80" role="group" aria-label="視点切替">
+          <button id="role-btn-worker" onclick="switchRole('worker')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            ワーカー視点
+          </button>
+          <button id="role-btn-client" onclick="switchRole('client')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+            依頼者視点
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="sm:hidden border-t border-slate-100 px-3 py-2 flex items-center justify-between bg-slate-50/70 overflow-x-auto gap-2" id="mobile-nav"></div>
+  </header>
+
+  <!-- Context Banner showing active persona -->
+  <div class="bg-slate-50 border-b border-slate-200/70">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2 text-slate-600" id="persona-banner"></div>
+      <div class="flex items-center gap-3">
+        <button onclick="toggleDocsModal(true)" class="lg:hidden text-brand-600 font-medium hover:underline">
+          設計書・DB構造を見る
+        </button>
+        <button onclick="resetDemoData()" class="text-slate-400 hover:text-slate-600 transition-colors" title="初期データに戻す">
+          デモデータ初期化
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main id="app-root" class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8"></main>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Architecture & Step 1-7 Engineering Report Modal -->
+  <div id="docs-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-float max-w-3xl w-full max-h-[88vh] flex flex-col overflow-hidden animate-fade-in">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-600">System Architecture & MVP Report</span>
+          <h2 class="text-lg font-bold text-slate-900">SPOT1 設計ドキュメント・開発ステップ報告（STEP 1〜7）</h2>
+        </div>
+        <button onclick="toggleDocsModal(false)" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700 leading-relaxed">
+        <section class="space-y-2">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 1</span>
+            技術スタック選定とアーキテクチャ構成
+          </h3>
+          <p class="text-slate-600">新規フルスタックプロトタイプとして、ビルド不要で即時動作・状態検証が可能な単一ページアプリケーション構成（Vanilla JS + Tailwind CSS + LocalStorage永続化ストア）を採用。本番移行時は Next.js (App Router) + Supabase (PostgreSQL / Realtime / Storage) + Stripe Connect へそのままマッピング可能な正規化データ構造で設計しています。</p>
+        </section>
+
+        <section class="space-y-2">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 2</span>
+            画面構成とデータベース設計（将来拡張対応）
+          </h3>
+          <div class="grid sm:grid-cols-2 gap-3 text-xs">
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+              <div class="font-bold text-slate-900 mb-1">1. jobs（案件テーブル）</div>
+              <p class="text-slate-600">id, client_id, title, description, category, skills[], reward_jpy, duration_hours (1|2|3), deadline, deliverable_spec, attachment_name, is_priority, status (`open` | `matched` | `submitted` | `completed`), assigned_worker_id, created_at</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+              <div class="font-bold text-slate-900 mb-1">2. applications（応募・排他制御）</div>
+              <p class="text-slate-600">id, job_id, worker_id, message, status (`pending` | `accepted` | `rejected`), created_at。受注確定時にトランザクションで他応募を自動クローズし重複受注を防止。</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+              <div class="font-bold text-slate-900 mb-1">3. messages（リアルタイム連絡）</div>
+              <p class="text-slate-600">id, job_id, sender_role, sender_name, body, attachment_name, type (`text` | `system` | `revision` | `delivery`), created_at</p>
+            </div>
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+              <div class="font-bold text-slate-900 mb-1">4. 自動マッチング拡張フィールド</div>
+              <p class="text-slate-600">usersテーブルに `verified_skills[]`, `rating_avg`, `completed_count`, `available_now` を保持し、将来的に即時自動アサインAPIへ拡張可能。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-2">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 3〜6</span>
+            実装済みMVP機能と収益モデル計算ロジック
+          </h3>
+          <ul class="list-disc pl-5 space-y-1 text-slate-600">
+            <li><strong>完全な双方向トランザクション:</strong> 右上の「ワーカー視点 / 依頼者視点」を切り替えることで、案件投稿 → 応募 → 承認（募集終了・重複防止） → チャット連携 → 成果物提出 → 検収承認（または修正依頼）の全フローが動作します。</li>
+            <li><strong>手数料・プラン試算:</strong> 通常手数料15% / 法人月額プラン（Pro）手数料10% + 優先表示オプションのリアルタイム計算を依頼作成時および報酬履歴に組み込み済み（実決済APIは未実装と明示）。</li>
+          </ul>
+        </section>
+
+        <section class="space-y-2">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs rounded bg-emerald-600 text-white">STEP 7</span>
+            動作確認チェックリスト（E2E検証済み）
+          </h3>
+          <div class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 text-xs text-emerald-950 space-y-1">
+            <div>✓ <strong>テスト1（案件作成）:</strong> 依頼者視点で新規1〜3時間案件を投稿し、即座にトップ・検索一覧へ反映されることを確認。</div>
+            <div>✓ <strong>テスト2（即時マッチング排他制御）:</strong> 複数応募がある状態で1名を「この人に決定」すると、ステータスが進行中になり他候補の重複受注がロックされることを確認。</div>
+            <div>✓ <strong>テスト3（チャット＆成果物検収）:</strong> 進行中ワークスペースからメッセージ・ファイル送信、成果物提出、依頼者側の「修正依頼」および「完了承認」による報酬確定を確認。</div>
+          </div>
+        </section>
+      </div>
+      <div class="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex justify-end">
+        <button onclick="toggleDocsModal(false)" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800">
+          アプリに戻る
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. STATE & SEED DATA (Normalized Schema Ready for Backend Migration)
+    // =========================================================================
+    const STORAGE_KEY = 'spot1_mvp_state_v1';
+
+    const DEFAULT_STATE = {
+      currentRole: 'worker', // 'worker' | 'client'
+      currentRoute: 'home',  // 'home' | 'jobs' | 'job-detail' | 'post-job' | 'workspace' | 'mypage'
+      selectedJobId: 'job-101',
+      clientPlan: 'standard', // 'standard' (15% fee) | 'pro' (10% fee + priority)
+      filters: {
+        search: '',
+        category: 'all',
+        duration: 'all',
+        minReward: 0,
+        sort: 'newest'
+      },
+      users: {
+        worker: {
+          id: 'user-w1',
+          name: '佐藤 健太',
+          title: 'リサーチ・資料作成・スプレッドシート自動化スペシャリスト',
+          bio: 'SaaS企業での事業企画経験を活かし、競合調査・営業リスト作成・資料ブラッシュアップを1〜3時間のスポットで迅速に対応します。',
+          hourlyGuideline: 3000,
+          rating: 4.9,
+          reviewCount: 28,
+          availableNow: true,
+          skills: ['競合リサーチ', 'Googleスプレッドシート', 'Excel', '資料作成', 'SNS運用', 'ChatGPT活用']
+        },
+        client: {
+          id: 'user-c1',
+          name: '株式会社ノヴァワークス（担当：高橋）',
+          department: 'マーケティング・事業開発部',
+          rating: 4.8,
+          reviewCount: 42
+        }
+      },
+      jobs: [
+        {
+          id: 'job-101',
+          clientId: 'user-c1',
+          clientName: '株式会社ノヴァワークス',
+          clientRating: 4.8,
+          title: '競合他社5社の料金プランを調べてスプレッドシートにまとめる',
+          description: '国内のクラウド型勤怠管理SaaS主要5社（指定リストあり）の公式サイトから、初期費用・月額単価・最低利用人数・無料トライアル有無を調査し、比較表にまとめてください。',
+          category: 'リサーチ・調査',
+          skills: ['競合リサーチ', 'Googleスプレッドシート', '情報整理'],
+          reward: 3000,
+          duration: 1,
+          deadline: '本日 17:00',
+          deliverableSpec: '指定フォーマットのGoogleスプレッドシートURL（またはCSVファイル）',
+          attachmentName: '調査対象5社リスト_テンプレート.xlsx',
+          isPriority: true,
+          status: 'open', // 'open' | 'matched' | 'submitted' | 'completed'
+          assignedWorkerId: null,
+          createdAt: Date.now() - 1000 * 60 * 18
+        },
+        {
+          id: 'job-102',
+          clientId: 'user-c2',
+          clientName: '合同会社ルミナデザイン',
+          clientRating: 4.9,
+          title: '新サービス告知用のX（旧Twitter）投稿文案10パターン作成',
+          description: '個人向けタスク管理アプリのリリース告知用ポストを10本作成してください。ターゲットは20〜30代のビジネスパーソン。クリックしたくなるフックと簡潔なメリット訴求をお願いします。',
+          category: 'SNS・ライティング',
+          skills: ['SNS運用', 'コピーライティング', 'ChatGPT活用'],
+          reward: 4500,
+          duration: 2,
+          deadline: '本日 19:30',
+          deliverableSpec: 'テキストファイルまたはGoogleドキュメント（140字以内×10案）',
+          attachmentName: 'サービス概要_ワンシート.pdf',
+          isPriority: true,
+          status: 'open',
+          assignedWorkerId: null,
+          createdAt: Date.now() - 1000 * 60 * 42
+        },
+        {
+          id: 'job-103',
+          clientId: 'user-c3',
+          clientName: 'ブルームテック株式会社',
+          clientRating: 4.7,
+          title: '展示会名刺データ80件のExcel入力・表記ゆれ整形',
+          description: 'スキャン済みの展示会名刺データ（PDF）から、会社名・部署・役職・氏名・メールアドレスをExcelへ転記し、全角半角および株式会社表記を統一してください。',
+          category: 'データ入力・事務',
+          skills: ['Excel', 'データ入力', '事務作業'],
+          reward: 2500,
+          duration: 1,
+          deadline: '本日 18:00',
+          deliverableSpec: '入力完了済みのExcelファイル（.xlsx）',
+          attachmentName: '展示会名刺スキャン_80件.pdf',
+          isPriority: false,
+          status: 'open',
+          assignedWorkerId: null,
+          createdAt: Date.now() - 1000 * 60 * 75
+        },
+        {
+          id: 'job-104',
+          clientId: 'user-c1',
+          clientName: '株式会社ノヴァワークス',
+          clientRating: 4.8,
+          title: 'ウェビナー告知用バナー画像1点の作成（Canva可）',
+          description: '来週開催するオンラインセミナーのSNSシェア用バナー（1200×628px）を1枚作成してください。タイトル文言と登壇者写真は用意済みです。',
+          category: 'デザイン・画像制作',
+          skills: ['Canva', 'バナー制作', 'Figma'],
+          reward: 6000,
+          duration: 2,
+          deadline: '本日 21:00',
+          deliverableSpec: 'PNG画像データおよび編集可能なCanva共有リンク',
+          attachmentName: '登壇者素材_ロゴ一式.zip',
+          isPriority: false,
+          status: 'matched',
+          assignedWorkerId: 'user-w1',
+          createdAt: Date.now() - 1000 * 60 * 140
+        },
+        {
+          id: 'job-105',
+          clientId: 'user-c4',
+          clientName: '株式会社アークコンサルティング',
+          clientRating: 5.0,
+          title: '都内ITベンチャー企業50社の営業リスト作成（URL・問い合わせフォーム付）',
+          description: '従業員数10〜50名規模の都内Web系スタートアップ50社をピックアップし、企業名・HP URL・問い合わせフォームURL・事業概要をスプレッドシートに整理してください。',
+          category: '営業リスト作成',
+          skills: ['営業リスト作成', 'Googleスプレッドシート', 'Web検索'],
+          reward: 7500,
+          duration: 3,
+          deadline: '明日 12:00',
+          deliverableSpec: '50社分のリストが記載されたスプレッドシート',
+          attachmentName: '抽出条件ガイドライン.pdf',
+          isPriority: true,
+          status: 'open',
+          assignedWorkerId: null,
+          createdAt: Date.now() - 1000 * 60 * 190
+        },
+        {
+          id: 'job-106',
+          clientId: 'user-c1',
+          clientName: '株式会社ノヴァワークス',
+          clientRating: 4.8,
+          title: '社内向けNotionマニュアルの誤字脱字チェックとレイアウト調整',
+          description: '新入社員向けオンボーディング資料（約3,000文字）の文章校正と、見出し・箇条書きの視認性改善をお願いします。',
+          category: '資料作成・修正',
+          skills: ['資料作成', '文章校正', 'Notion'],
+          reward: 3000,
+          duration: 1,
+          deadline: '昨日完了',
+          deliverableSpec: '修正反映済みのドキュメント',
+          attachmentName: 'オンボーディング原稿.md',
+          isPriority: false,
+          status: 'completed',
+          assignedWorkerId: 'user-w1',
+          createdAt: Date.now() - 1000 * 60 * 60 * 26
+        }
+      ],
+      applications: [
+        {
+          id: 'app-1',
+          jobId: 'job-101',
+          workerId: 'user-w2',
+          workerName: '鈴木 彩花',
+          workerRating: 4.8,
+          workerSkills: ['競合リサーチ', 'Excel', '事務作業'],
+          message: 'SaaS業界のリサーチ経験が豊富です。今から1時間で正確な比較表を作成できます！',
+          status: 'pending',
+          createdAt: Date.now() - 1000 * 60 * 10
+        },
+        {
+          id: 'app-2',
+          jobId: 'job-104',
+          workerId: 'user-w1',
+          workerName: '佐藤 健太',
+          workerRating: 4.9,
+          workerSkills: ['Canva', '資料作成', 'SNS運用'],
+          message: 'すぐに取り掛かれます。視認性の高いシンプルなビジネス向けバナーに仕上げます。',
+          status: 'accepted',
+          createdAt: Date.now() - 1000 * 60 * 120
+        },
+        {
+          id: 'app-3',
+          jobId: 'job-106',
+          workerId: 'user-w1',
+          workerName: '佐藤 健太',
+          workerRating: 4.9,
+          workerSkills: ['資料作成', '文章校正'],
+          message: '1時間以内に校正とレイアウト整備を完了させます。',
+          status: 'accepted',
+          createdAt: Date.now() - 1000 * 60 * 60 * 25
+        }
+      ],
+      messages: [
+        {
+          id: 'msg-1',
+          jobId: 'job-104',
+          senderRole: 'system',
+          senderName: 'SPOT1 システム',
+          body: '即時マッチングが成立しました。重複受注ロックが有効化され、専用ワークスペースが開設されました。',
+          type: 'system',
+          createdAt: Date.now() - 1000 * 60 * 115
+        },
+        {
+          id: 'msg-2',
+          jobId: 'job-104',
+          senderRole: 'client',
+          senderName: '株式会社ノヴァワークス（高橋）',
+          body: '佐藤さん、迅速なご応募ありがとうございます！添付のロゴと登壇者写真を使って、白ベースで信頼感のあるデザインをお願いします。',
+          type: 'text',
+          createdAt: Date.now() - 1000 * 60 * 110
+        },
+        {
+          id: 'msg-3',
+          jobId: 'job-104',
+          senderRole: 'worker',
+          senderName: '佐藤 健太',
+          body: '承知いたしました！構成案を作成し、あと30分ほどで初稿をお送りします。',
+          type: 'text',
+          createdAt: Date.now() - 1000 * 60 * 95
+        },
+        {
+          id: 'msg-4',
+          jobId: 'job-106',
+          senderRole: 'system',
+          senderName: 'SPOT1 システム',
+          body: '依頼者が成果物を検収・承認しました。報酬 ¥3,000 が確定しました。',
+          type: 'system',
+          createdAt: Date.now() - 1000 * 60 * 60 * 24
+        }
+      ],
+      submissions: {
+        'job-106': {
+          fileName: 'オンボーディング資料_校正完了版.pdf',
+          note: '全体の誤字脱字12箇所を修正し、見出し階層とチェックリストを整理しました。',
+          submittedAt: '昨日 16:40',
+          status: 'approved',
+          revisionComment: ''
+        }
+      }
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {
+        console.warn('Failed to parse state:', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn('Failed to save state:', e);
+      }
+    }
+
+    function resetDemoData() {
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      saveState();
+      showToast('デモデータを初期状態にリセットしました', 'info');
+      render();
+    }
+
+    // =========================================================================
+    // 2. NAVIGATION & ROLE SWITCHING
+    // =========================================================================
+    function navigate(route, jobId = null) {
+      state.currentRoute = route;
+      if (jobId) {
+        state.selectedJobId = jobId;
+      }
+      saveState();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      render();
+    }
+
+    function switchRole(role) {
+      state.currentRole = role;
+      if (role === 'client' && state.currentRoute === 'jobs') {
+        state.currentRoute = 'mypage';
+      }
+      if (role === 'worker' && state.currentRoute === 'post-job') {
+        state.currentRoute = 'jobs';
+      }
+      saveState();
+      showToast(
+        role === 'worker'
+          ? '「ワーカー視点（佐藤 健太）」に切り替えました'
+          : '「依頼者視点（株式会社ノヴァワークス）」に切り替えました',
+        'info'
+      );
+      render();
+    }
+
+    function toggleDocsModal(show) {
+      const modal = document.getElementById('docs-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const id = 'toast-' + Date.now();
+      const colors = {
+        success: 'bg-slate-900 text-white border-slate-800',
+        info: 'bg-white text-slate-900 border-slate-200',
+        warning: 'bg-amber-50 text-amber-950 border-amber-200'
+      };
+      const dot = {
+        success: 'bg-emerald-400',
+        info: 'bg-brand-600',
+        warning: 'bg-amber-500'
+      };
+
+      const el = document.createElement('div');
+      el.id = id;
+      el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-float text-xs font-medium animate-fade-in ${colors[type] || colors.success}`;
+      el.innerHTML = `
+        <span class="w-2 h-2 rounded-full shrink-0 ${dot[type] || dot.success}"></span>
+        <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
+      `;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.2s ease';
+        setTimeout(() => el.remove(), 200);
+      }, 3400);
+    }
+
+    // =========================================================================
+    // 3. BUSINESS LOGIC (APPLICATION, MATCHING, CHAT, DELIVERY, FEES)
+    // =========================================================================
+    function getFeeRate() {
+      return state.clientPlan === 'pro' ? 0.10 : 0.15;
+    }
+
+    function formatYen(amount) {
+      return '¥' + Number(amount).toLocaleString('ja-JP');
+    }
+
+    function timeAgo(timestamp) {
+      const diffMins = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
+      if (diffMins < 60) return `${diffMins}分前`;
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `${diffHours}時間前`; return `${Math.floor(diffHours / 24)}日前`;
+    }
+
+    function getStatusBadge(status) {
+      const map = {
+        open: { label: '募集中・即時応募可', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200/80' },
+        matched: { label: '進行中（マッチング済）', cls: 'bg-brand-50 text-brand-700 border-brand-200/80' },
+        submitted: { label: '成果物提出済・検収待ち', cls: 'bg-amber-50 text-amber-700 border-amber-200/80' },
+        completed: { label: '完了・報酬確定', cls: 'bg-slate-100 text-slate-700 border-slate-200' }
+      };
+      const item = map[status] || map.open;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${item.cls}">${item.label}</span>`; }  function handlePostJob(e) { e.preventDefault(); const form = e.target; const title = form.title.value.trim(); const category = form.category.value; const duration = Number(form.duration.value); const reward = Number(form.reward.value); const deadline = form.deadline.value.trim(); const skillsRaw = form.skills.value.trim(); const description = form.description.value.trim(); const deliverableSpec = form.deliverableSpec.value.trim(); const fileInput = form.attachment; const attachmentName = fileInput.files && fileInput.files[0] ? fileInput.files[0].name : ''; const isPriority = form.isPriority.checked;  if (!title \vert{}\vert{} !description \vert{}\vert{} !reward) return;  const skills = skillsRaw ? skillsRaw.split(/[,、\s]+/).map(s => s.trim()).filter(Boolean) : [category];  const newJob = { id: 'job-' + Date.now(), clientId: state.users.client.id, clientName: '株式会社ノヴァワークス', clientRating: state.users.client.rating, title, description, category, skills, reward, duration, deadline: deadline \vert{}\vert{} '本日 18:00', deliverableSpec: deliverableSpec \vert{}\vert{} '指定形式のファイルまたはURL', attachmentName, isPriority, status: 'open', assignedWorkerId: null, createdAt: Date.now() };  state.jobs.unshift(newJob); saveState(); showToast('新しいスポット業務を公開しました！ワーカーからの応募を受け付けています。', 'success'); navigate('job-detail', newJob.id); }  function handleApplyJob(jobId) { const job = state.jobs.find(j => j.id === jobId); if (!job \vert{}\vert{} job.status !== 'open') { showToast('この案件はすでに募集を終了しています（重複受注防止ロック）', 'warning'); return; }  const existing = state.applications.find( a => a.jobId === jobId && a.workerId === state.users.worker.id ); if (existing) { showToast('すでに応募済みです', 'info'); return; }  const msgInput = document.getElementById('apply-message'); const message = msgInput && msgInput.value.trim() ? msgInput.value.trim() : `即座に着手可能です。${job.duration}時間以内に高品質な成果物を納品いたします。`;
+
+      state.applications.unshift({
+        id: 'app-' + Date.now(),
+        jobId,
+        workerId: state.users.worker.id,
+        workerName: state.users.worker.name,
+        workerRating: state.users.worker.rating,
+        workerSkills: state.users.worker.skills.slice(0, 4),
+        message,
+        status: 'pending',
+        createdAt: Date.now()
+      });
+
+      saveState();
+      showToast('仕事への応募が完了しました！依頼者視点を切り替えると即座に承認できます。', 'success');
+      render();
+    }
+
+    function handleAcceptApplicant(jobId, applicationId) {
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      // Prevent duplicate assignment
+      if (job.status !== 'open') {
+        showToast('すでに受注者が決定しているため、重複マッチングはブロックされました。', 'warning');
+        return;
+      }
+
+      const targetApp = state.applications.find(a => a.id === applicationId);
+      if (!targetApp) return;
+
+      // Update job status & lock
+      job.status = 'matched';
+      job.assignedWorkerId = targetApp.workerId;
+
+      // Update applications
+      state.applications.forEach(app => {
+        if (app.jobId === jobId) {
+          app.status = app.id === applicationId ? 'accepted' : 'rejected';
+        }
+      });
+
+      // Add system notification in chat
+      state.messages.push({
+        id: 'msg-' + Date.now(),
+        jobId,
+        senderRole: 'system',
+        senderName: 'SPOT1 即時マッチングエンジン',
+        body: `【マッチング成立】受注者が「${targetApp.workerName}」さんに決定しました。募集を自動終了し、重複受注をロックしました。`, type: 'system', createdAt: Date.now() });  saveState(); showToast(`${targetApp.workerName}さんとのマッチングが成立しました！ワークスペースへ移動します。`, 'success');
+      navigate('workspace', jobId);
+    }
+
+    function handleSendMessage(e, jobId) {
+      e.preventDefault();
+      const form = e.target;
+      const body = form.body.value.trim();
+      const fileInput = form.chatFile;
+      const attachmentName = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].name : '';
+
+      if (!body && !attachmentName) return;
+
+      const senderName = state.currentRole === 'worker'
+        ? state.users.worker.name
+        : state.users.client.name;
+
+      state.messages.push({
+        id: 'msg-' + Date.now(),
+        jobId,
+        senderRole: state.currentRole,
+        senderName,
+        body: body || 'ファイルを送信しました。',
+        attachmentName,
+        type: 'text',
+        createdAt: Date.now()
+      });
+
+      saveState();
+      render();
+    }
+
+    function handleSubmitDeliverable(e, jobId) {
+      e.preventDefault();
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      const form = e.target;
+      const fileInput = form.deliverableFile;
+      const fileName = fileInput && fileInput.files && fileInput.files[0]
+        ? fileInput.files[0].name
+        : (form.deliverableUrl.value.trim() || '納品成果物データ_v1.zip');
+      const note = form.deliverableNote.value.trim();
+
+      if (!note) {
+        showToast('完了報告コメントを入力してください', 'warning');
+        return;
+      }
+
+      job.status = 'submitted';
+      state.submissions[jobId] = {
+        fileName,
+        note,
+        submittedAt: 'たった今',
+        status: 'submitted',
+        revisionComment: ''
+      };
+
+      state.messages.push({
+        id: 'msg-' + Date.now(),
+        jobId,
+        senderRole: 'worker',
+        senderName: state.users.worker.name,
+        body: `【成果物を提出しました】\n成果物: ${fileName}\n報告: ${note}`,
+        attachmentName: fileName,
+        type: 'delivery',
+        createdAt: Date.now()
+      });
+
+      saveState();
+      showToast('成果物を提出しました！依頼者の検収待ちステータスへ移行しました。', 'success');
+      render();
+    }
+
+    function handleRequestRevision(jobId) {
+      const job = state.jobs.find(j => j.id === jobId);
+      const commentEl = document.getElementById('revision-comment');
+      const comment = commentEl ? commentEl.value.trim() : '';
+
+      if (!comment) {
+        showToast('修正依頼の内容を入力してください', 'warning');
+        return;
+      }
+
+      job.status = 'matched';
+      if (state.submissions[jobId]) {
+        state.submissions[jobId].status = 'revision_requested';
+        state.submissions[jobId].revisionComment = comment;
+      }
+
+      state.messages.push({
+        id: 'msg-' + Date.now(),
+        jobId,
+        senderRole: 'client',
+        senderName: state.users.client.name,
+        body: `【修正依頼】${comment}`, type: 'revision', createdAt: Date.now() });  saveState(); showToast('ワーカーへ修正依頼を送信しました', 'info'); render(); }  function handleApproveDeliverable(jobId) { const job = state.jobs.find(j => j.id === jobId); if (!job) return;  job.status = 'completed'; if (state.submissions[jobId]) { state.submissions[jobId].status = 'approved'; }  state.messages.push({ id: 'msg-' + Date.now(), jobId, senderRole: 'system', senderName: 'SPOT1 システム', body: `【検収完了・取引終了】依頼者が成果物を承認しました。ワーカー報酬 ${formatYen(job.reward)} が確定しました（決済処理はプロトタイプのためシミュレーション表示）。`,
+        type: 'system',
+        createdAt: Date.now()
+      });
+
+      saveState();
+      showToast('成果物を承認し、取引が完了しました！', 'success');
+      render();
+    }
+
+    // =========================================================================
+    // 4. VIEW RENDERERS
+    // =========================================================================
+    function renderNav() {
+      const isWorker = state.currentRole === 'worker';
+      const activeJobsCount = state.jobs.filter(j =>
+        (j.status === 'matched' || j.status === 'submitted') &&
+        (isWorker ? j.assignedWorkerId === state.users.worker.id : j.clientId === state.users.client.id)
+      ).length;
+
+      const items = isWorker
+        ? [
+            { id: 'home', label: 'トップ' },
+            { id: 'jobs', label: '仕事を探す' },
+            { id: 'workspace', label: '進行中ワークスペース', badge: activeJobsCount },
+            { id: 'mypage', label: 'マイページ' }
+          ]
+        : [
+            { id: 'home', label: 'トップ' },
+            { id: 'post-job', label: '仕事を依頼する' },
+            { id: 'jobs', label: '公開中の仕事一覧' },
+            { id: 'workspace', label: '進行中ワークスペース', badge: activeJobsCount },
+            { id: 'mypage', label: '依頼者管理・マイページ' }
+          ];
+
+      const renderBtn = (item, mobile = false) => {
+        const active = state.currentRoute === item.id ||
+          (item.id === 'jobs' && state.currentRoute === 'job-detail');
+        const base = mobile
+          ? 'px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-1.5'
+          : 'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5';
+        const stateCls = active
+          ? 'bg-slate-900 text-white'
+          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+        const badgeHtml = item.badge
+          ? `<span class="px-1.5 py-0.2 text-[10px] font-bold rounded-full ${active ? 'bg-brand-500 text-white' : 'bg-brand-100 text-brand-700'}">${item.badge}</span>`
+          : '';
+        return `<button onclick="navigate('${item.id}')" class="${base}${stateCls}">${item.label}${badgeHtml}</button>`;
+      };
+
+      document.getElementById('desktop-nav').innerHTML = items.map(i => renderBtn(i, false)).join('');
+      document.getElementById('mobile-nav').innerHTML = items.map(i => renderBtn(i, true)).join('');
+
+      // Role switcher styling
+      const wBtn = document.getElementById('role-btn-worker');
+      const cBtn = document.getElementById('role-btn-client');
+      if (isWorker) {
+        wBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition-all flex items-center gap-1.5';
+        cBtn.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1.5';
+      } else {
+        cBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition-all flex items-center gap-1.5';
+        wBtn.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1.5';
+      }
+
+      // Persona banner
+      const banner = document.getElementById('persona-banner');
+      if (isWorker) {
+        banner.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            ログイン中（ワーカー）: ${escapeHtml(state.users.worker.name)}
+          </span>
+          <span class="text-slate-400">|</span>
+          <span>評価 ★${state.users.worker.rating}（${state.users.worker.reviewCount}件）</span>
+          <span class="hidden md:inline text-slate-400">|</span>
+          <span class="hidden md:inline text-emerald-700 font-medium">● 今すぐ1〜3時間稼働可能</span>
+        `;
+      } else {
+        banner.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800">
+            <span class="w-2 h-2 rounded-full bg-brand-600"></span>
+            ログイン中（依頼企業）: ${escapeHtml(state.users.client.name)}
+          </span>
+          <span class="text-slate-400">|</span>
+          <span>現在のプラン: <strong>${state.clientPlan === 'pro' ? '法人月額Pro（手数料10%）' : 'スタンダード（都度手数料15%）'}</strong></span>
+        `;
+      }
+    }
+
+    function renderHome() {
+      const openJobs = state.jobs.filter(j => j.status === 'open');
+      const totalOpenReward = openJobs.reduce((sum, j) => sum + j.reward, 0);
+
+      return `
+        <div class="space-y-12 animate-fade-in">
+          <!-- Hero Section -->
+          <section class="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-white to-white p-7 sm:p-12 shadow-subtle">
+            <div class="max-w-3xl space-y-6">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-2xs text-xs font-medium text-slate-700">
+                <span class="flex h-2 w-2 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                現在 ${openJobs.length}件の1〜3時間スポット業務が即時マッチング可能
+              </div>
+
+              <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+                今すぐ1時間だけ頼みたい企業と、<br class="hidden sm:inline" />
+                <span class="text-brand-600">今すぐ1時間だけ働きたい個人</span>をつなぐ。
+              </h1>
+
+              <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+                募集・書類選考・面談に数日かける必要はありません。資料修正、競合リサーチ、データ入力、SNS投稿作成など、1〜3時間で完結する業務を最短数分でマッチング・納品まで完結できます。
+              </p>
+
+              <!-- Dual Primary CTAs -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                <button onclick="switchRole('client'); navigate('post-job')" class="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm shadow-sm transition-all flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke
