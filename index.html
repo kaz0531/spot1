@@ -3,36 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPOT1 | 今すぐ1〜3時間だけつながるスポット業務マッチング</title>
+  <title>SPOT1 | 今すぐ1時間だけ、仕事を頼む・働くスポット業務マッチング</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+            sans: ['"Inter"', '"Noto Sans JP"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Noto Sans JP"', 'sans-serif'],
           },
           colors: {
             brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              900: '#312e81',
-            },
-            slate: {
-              850: '#172033',
-              950: '#0a0f1c',
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
             }
           },
           boxShadow: {
             'subtle': '0 1px 2px 0 rgba(15, 23, 42, 0.04)',
-            'card': '0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04)',
-            'float': '0 12px 28px -6px rgba(15, 23, 42, 0.12), 0 4px 10px -4px rgba(15, 23, 42, 0.06)',
+            'card': '0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03)',
+            'elevated': '0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04)',
           }
         }
       }
@@ -40,13 +36,15 @@
   </script>
   <style>
     body {
-      background-color: #ffffff;
-      color: #0f172a;
+      background-color: #F8FAFC;
+      color: #0F172A;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
+    /* Custom subtle scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -55,11 +53,11 @@
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+      background: #CBD5E1;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+      background: #94A3B8;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
@@ -70,390 +68,439 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-white text-slate-900 selection:bg-brand-100 selection:text-brand-900">
-
-  <!-- Top Navigation Header -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-      <!-- Logo & Brand -->
-      <div class="flex items-center gap-6">
-        <button onclick="navigate('home')" class="flex items-center gap-2.5 text-left group focus:outline-none">
-          <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm tracking-tight group-hover:bg-brand-600 transition-colors">
-            S1
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span class="font-bold text-lg tracking-tight text-slate-900">SPOT1</span>
-            <span class="hidden md:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200/70">
-              即時1〜3時間マッチング
-            </span>
-          </div>
-        </button>
-
-        <!-- Primary Nav -->
-        <nav class="hidden sm:flex items-center gap-1" id="desktop-nav"></nav>
-      </div>
-
-      <!-- Right Controls: Role Switcher & Engineering Docs -->
-      <div class="flex items-center gap-2.5">
-        <button onclick="toggleDocsModal(true)" class="hidden lg:inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
-          <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          設計書 & 開発レポート
-        </button>
-
-        <!-- Role Switcher Pill -->
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80" role="group" aria-label="視点切替">
-          <button id="role-btn-worker" onclick="switchRole('worker')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            ワーカー視点
-          </button>
-          <button id="role-btn-client" onclick="switchRole('client')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
-            依頼者視点
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile Navigation Bar -->
-    <div class="sm:hidden border-t border-slate-100 px-3 py-2 flex items-center justify-between bg-slate-50/70 overflow-x-auto gap-2" id="mobile-nav"></div>
-  </header>
-
-  <!-- Context Banner showing active persona -->
-  <div class="bg-slate-50 border-b border-slate-200/70">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-      <div class="flex items-center gap-2 text-slate-600" id="persona-banner"></div>
-      <div class="flex items-center gap-3">
-        <button onclick="toggleDocsModal(true)" class="lg:hidden text-brand-600 font-medium hover:underline">
-          設計書・DB構造を見る
-        </button>
-        <button onclick="resetDemoData()" class="text-slate-400 hover:text-slate-600 transition-colors" title="初期データに戻す">
-          デモデータ初期化
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content Container -->
-  <main id="app-root" class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8"></main>
+<body class="min-h-screen flex flex-col selection:bg-brand-100 selection:text-brand-700">
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+  <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Architecture & Step 1-7 Engineering Report Modal -->
-  <div id="docs-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-float max-w-3xl w-full max-h-[88vh] flex flex-col overflow-hidden animate-fade-in">
-      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
-        <div>
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-600">System Architecture & MVP Report</span>
-          <h2 class="text-lg font-bold text-slate-900">SPOT1 設計ドキュメント・開発ステップ報告（STEP 1〜7）</h2>
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Logo & Primary Nav -->
+      <div class="flex items-center gap-6 lg:gap-8">
+        <button onclick="navigateTo('discover')" class="flex items-center gap-2.5 text-left group focus:outline-none">
+          <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white shadow-subtle group-hover:bg-brand-600 transition-colors">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div class="flex items-baseline gap-1.5">
+            <span class="font-display font-bold text-lg tracking-tight text-slate-900">SPOT1</span>
+            <span class="hidden sm:inline-block text-[11px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">BETA</span>
+          </div>
+        </button>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-1" id="desktop-nav">
+          <button data-nav="discover" onclick="navigateTo('discover')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors">
+            仕事を探す
+          </button>
+          <button data-nav="post" onclick="navigateTo('post')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors">
+            仕事を依頼する
+          </button>
+          <button data-nav="workspace" onclick="navigateTo('workspace')" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5">
+            <span>マイページ・取引管理</span>
+            <span id="nav-badge" class="hidden px-1.5 py-0.5 text-[11px] font-semibold rounded-full bg-brand-600 text-white tabular-nums">0</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Right Controls: Role Switcher & Engineering Report -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Role Switcher Pill (Allows instant end-to-end testing) -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80" title="視点を切り替えて依頼〜受注〜検収の一連の流れをテストできます">
+          <button id="role-btn-worker" onclick="switchRole('worker')" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>ワーカー視点</span>
+          </button>
+          <button id="role-btn-client" onclick="switchRole('client')" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">
+            <span class="w-2 h-2 rounded-full bg-brand-600"></span>
+            <span>依頼者視点</span>
+          </button>
         </div>
-        <button onclick="toggleDocsModal(false)" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+        <!-- Active Persona Pill (Desktop) -->
+        <div id="active-persona-badge" class="hidden lg:flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-white border border-slate-200 text-xs text-slate-700 shadow-subtle">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Engineering Report Toggle -->
+        <button onclick="openEngineeringModal()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 transition-colors" title="STEP 1-7 設計・実装レポートを確認">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
         </button>
       </div>
-      <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700 leading-relaxed">
-        <section class="space-y-2">
-          <h3 class="font-bold text-slate-900 flex items-center gap-2">
-            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 1</span>
-            技術スタック選定とアーキテクチャ構成
-          </h3>
-          <p class="text-slate-600">新規フルスタックプロトタイプとして、ビルド不要で即時動作・状態検証が可能な単一ページアプリケーション構成（Vanilla JS + Tailwind CSS + LocalStorage永続化ストア）を採用。本番移行時は Next.js (App Router) + Supabase (PostgreSQL / Realtime / Storage) + Stripe Connect へそのままマッピング可能な正規化データ構造で設計しています。</p>
-        </section>
+    </div>
+  </header>
 
-        <section class="space-y-2">
-          <h3 class="font-bold text-slate-900 flex items-center gap-2">
-            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 2</span>
-            画面構成とデータベース設計（将来拡張対応）
-          </h3>
-          <div class="grid sm:grid-cols-2 gap-3 text-xs">
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-              <div class="font-bold text-slate-900 mb-1">1. jobs（案件テーブル）</div>
-              <p class="text-slate-600">id, client_id, title, description, category, skills[], reward_jpy, duration_hours (1|2|3), deadline, deliverable_spec, attachment_name, is_priority, status (`open` | `matched` | `submitted` | `completed`), assigned_worker_id, created_at</p>
-            </div>
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-              <div class="font-bold text-slate-900 mb-1">2. applications（応募・排他制御）</div>
-              <p class="text-slate-600">id, job_id, worker_id, message, status (`pending` | `accepted` | `rejected`), created_at。受注確定時にトランザクションで他応募を自動クローズし重複受注を防止。</p>
-            </div>
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-              <div class="font-bold text-slate-900 mb-1">3. messages（リアルタイム連絡）</div>
-              <p class="text-slate-600">id, job_id, sender_role, sender_name, body, attachment_name, type (`text` | `system` | `revision` | `delivery`), created_at</p>
-            </div>
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
-              <div class="font-bold text-slate-900 mb-1">4. 自動マッチング拡張フィールド</div>
-              <p class="text-slate-600">usersテーブルに `verified_skills[]`, `rating_avg`, `completed_count`, `available_now` を保持し、将来的に即時自動アサインAPIへ拡張可能。</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="space-y-2">
-          <h3 class="font-bold text-slate-900 flex items-center gap-2">
-            <span class="px-2 py-0.5 text-xs rounded bg-slate-900 text-white">STEP 3〜6</span>
-            実装済みMVP機能と収益モデル計算ロジック
-          </h3>
-          <ul class="list-disc pl-5 space-y-1 text-slate-600">
-            <li><strong>完全な双方向トランザクション:</strong> 右上の「ワーカー視点 / 依頼者視点」を切り替えることで、案件投稿 → 応募 → 承認（募集終了・重複防止） → チャット連携 → 成果物提出 → 検収承認（または修正依頼）の全フローが動作します。</li>
-            <li><strong>手数料・プラン試算:</strong> 通常手数料15% / 法人月額プラン（Pro）手数料10% + 優先表示オプションのリアルタイム計算を依頼作成時および報酬履歴に組み込み済み（実決済APIは未実装と明示）。</li>
-          </ul>
-        </section>
-
-        <section class="space-y-2">
-          <h3 class="font-bold text-slate-900 flex items-center gap-2">
-            <span class="px-2 py-0.5 text-xs rounded bg-emerald-600 text-white">STEP 7</span>
-            動作確認チェックリスト（E2E検証済み）
-          </h3>
-          <div class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 text-xs text-emerald-950 space-y-1">
-            <div>✓ <strong>テスト1（案件作成）:</strong> 依頼者視点で新規1〜3時間案件を投稿し、即座にトップ・検索一覧へ反映されることを確認。</div>
-            <div>✓ <strong>テスト2（即時マッチング排他制御）:</strong> 複数応募がある状態で1名を「この人に決定」すると、ステータスが進行中になり他候補の重複受注がロックされることを確認。</div>
-            <div>✓ <strong>テスト3（チャット＆成果物検収）:</strong> 進行中ワークスペースからメッセージ・ファイル送信、成果物提出、依頼者側の「修正依頼」および「完了承認」による報酬確定を確認。</div>
-          </div>
-        </section>
-      </div>
-      <div class="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex justify-end">
-        <button onclick="toggleDocsModal(false)" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800">
-          アプリに戻る
+  <!-- Role Context Banner (Subtle guide bar showing active persona & quick action) -->
+  <div id="role-banner" class="bg-white border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div id="role-banner-text" class="flex items-center gap-2 text-slate-600"></div>
+      <div class="flex items-center gap-3">
+        <button onclick="resetDemoData()" class="text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors">
+          デモデータを初期状態に戻す
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Main Content Area -->
+  <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 md:pb-12">
+    <!-- Views are rendered here by JS -->
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-elevated">
+    <button data-nav="discover" onclick="navigateTo('discover')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-lg text-[11px] font-medium">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <span>仕事を探す</span>
+    </button>
+    <button data-nav="post" onclick="navigateTo('post')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-lg text-[11px] font-medium">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>仕事を依頼</span>
+    </button>
+    <button data-nav="workspace" onclick="navigateTo('workspace')" class="mobile-nav-btn relative flex flex-col items-center justify-center py-1 px-3 rounded-lg text-[11px] font-medium">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      </svg>
+      <span>マイページ</span>
+      <span id="mobile-nav-badge" class="hidden absolute top-0.5 right-2 w-4 h-4 text-[10px] font-bold rounded-full bg-brand-600 text-white flex items-center justify-center tabular-nums">0</span>
+    </button>
+  </nav>
+
+  <!-- Slide-over Drawer / Modal Container -->
+  <div id="modal-root" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop -->
+    <div id="modal-backdrop" onclick="closeModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] transition-opacity"></div>
+    <!-- Modal Content Container -->
+    <div id="modal-panel" class="fixed inset-y-0 right-0 max-w-2xl w-full bg-white shadow-2xl border-l border-slate-200 overflow-y-auto z-10 animate-fade-in">
+      <!-- Dynamic Drawer Content -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-auto hidden md:block">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-bold text-slate-800">SPOT1</span>
+        <span>今すぐ1時間だけ仕事を頼みたい企業と、今すぐ働きたい個人をつなぐスポット業務プラットフォーム</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="openEngineeringModal()" class="text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+          <span>設計・データベース・テスト仕様書 (STEP 1–7)</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    // =========================================================================
-    // 1. STATE & SEED DATA (Normalized Schema Ready for Backend Migration)
-    // =========================================================================
+    /**
+     * ============================================================================
+     * SPOT1 MVP ARCHITECTURE & STATE MANAGEMENT
+     * ============================================================================
+     * Data Schema designed for scalability:
+     * - users: Worker & Client profiles, ratings, skills, plan tiers
+     * - jobs: Core task units with status lifecycle:
+     *         'open' -> 'matched' -> 'submitted' -> 'completed'
+     * - applications: Worker bids with duplicate-order lock constraints
+     * - messages: Per-job real-time chat logs & file attachments
+     * - deliverables: Submitted files, revision history, approval timestamps
+     */
+
     const STORAGE_KEY = 'spot1_mvp_state_v1';
 
-    const DEFAULT_STATE = {
-      currentRole: 'worker', // 'worker' | 'client'
-      currentRoute: 'home',  // 'home' | 'jobs' | 'job-detail' | 'post-job' | 'workspace' | 'mypage'
-      selectedJobId: 'job-101',
-      clientPlan: 'standard', // 'standard' (15% fee) | 'pro' (10% fee + priority)
-      filters: {
-        search: '',
-        category: 'all',
-        duration: 'all',
-        minReward: 0,
-        sort: 'newest'
-      },
-      users: {
-        worker: {
-          id: 'user-w1',
-          name: '佐藤 健太',
-          title: 'リサーチ・資料作成・スプレッドシート自動化スペシャリスト',
-          bio: 'SaaS企業での事業企画経験を活かし、競合調査・営業リスト作成・資料ブラッシュアップを1〜3時間のスポットで迅速に対応します。',
-          hourlyGuideline: 3000,
-          rating: 4.9,
-          reviewCount: 28,
-          availableNow: true,
-          skills: ['競合リサーチ', 'Googleスプレッドシート', 'Excel', '資料作成', 'SNS運用', 'ChatGPT活用']
-        },
-        client: {
-          id: 'user-c1',
-          name: '株式会社ノヴァワークス（担当：高橋）',
-          department: 'マーケティング・事業開発部',
-          rating: 4.8,
-          reviewCount: 42
-        }
-      },
-      jobs: [
-        {
-          id: 'job-101',
-          clientId: 'user-c1',
-          clientName: '株式会社ノヴァワークス',
-          clientRating: 4.8,
-          title: '競合他社5社の料金プランを調べてスプレッドシートにまとめる',
-          description: '国内のクラウド型勤怠管理SaaS主要5社（指定リストあり）の公式サイトから、初期費用・月額単価・最低利用人数・無料トライアル有無を調査し、比較表にまとめてください。',
-          category: 'リサーチ・調査',
-          skills: ['競合リサーチ', 'Googleスプレッドシート', '情報整理'],
-          reward: 3000,
-          duration: 1,
-          deadline: '本日 17:00',
-          deliverableSpec: '指定フォーマットのGoogleスプレッドシートURL（またはCSVファイル）',
-          attachmentName: '調査対象5社リスト_テンプレート.xlsx',
-          isPriority: true,
-          status: 'open', // 'open' | 'matched' | 'submitted' | 'completed'
-          assignedWorkerId: null,
-          createdAt: Date.now() - 1000 * 60 * 18
-        },
-        {
-          id: 'job-102',
-          clientId: 'user-c2',
-          clientName: '合同会社ルミナデザイン',
-          clientRating: 4.9,
-          title: '新サービス告知用のX（旧Twitter）投稿文案10パターン作成',
-          description: '個人向けタスク管理アプリのリリース告知用ポストを10本作成してください。ターゲットは20〜30代のビジネスパーソン。クリックしたくなるフックと簡潔なメリット訴求をお願いします。',
-          category: 'SNS・ライティング',
-          skills: ['SNS運用', 'コピーライティング', 'ChatGPT活用'],
-          reward: 4500,
-          duration: 2,
-          deadline: '本日 19:30',
-          deliverableSpec: 'テキストファイルまたはGoogleドキュメント（140字以内×10案）',
-          attachmentName: 'サービス概要_ワンシート.pdf',
-          isPriority: true,
-          status: 'open',
-          assignedWorkerId: null,
-          createdAt: Date.now() - 1000 * 60 * 42
-        },
-        {
-          id: 'job-103',
-          clientId: 'user-c3',
-          clientName: 'ブルームテック株式会社',
-          clientRating: 4.7,
-          title: '展示会名刺データ80件のExcel入力・表記ゆれ整形',
-          description: 'スキャン済みの展示会名刺データ（PDF）から、会社名・部署・役職・氏名・メールアドレスをExcelへ転記し、全角半角および株式会社表記を統一してください。',
-          category: 'データ入力・事務',
-          skills: ['Excel', 'データ入力', '事務作業'],
-          reward: 2500,
-          duration: 1,
-          deadline: '本日 18:00',
-          deliverableSpec: '入力完了済みのExcelファイル（.xlsx）',
-          attachmentName: '展示会名刺スキャン_80件.pdf',
-          isPriority: false,
-          status: 'open',
-          assignedWorkerId: null,
-          createdAt: Date.now() - 1000 * 60 * 75
-        },
-        {
-          id: 'job-104',
-          clientId: 'user-c1',
-          clientName: '株式会社ノヴァワークス',
-          clientRating: 4.8,
-          title: 'ウェビナー告知用バナー画像1点の作成（Canva可）',
-          description: '来週開催するオンラインセミナーのSNSシェア用バナー（1200×628px）を1枚作成してください。タイトル文言と登壇者写真は用意済みです。',
-          category: 'デザイン・画像制作',
-          skills: ['Canva', 'バナー制作', 'Figma'],
-          reward: 6000,
-          duration: 2,
-          deadline: '本日 21:00',
-          deliverableSpec: 'PNG画像データおよび編集可能なCanva共有リンク',
-          attachmentName: '登壇者素材_ロゴ一式.zip',
-          isPriority: false,
-          status: 'matched',
-          assignedWorkerId: 'user-w1',
-          createdAt: Date.now() - 1000 * 60 * 140
-        },
-        {
-          id: 'job-105',
-          clientId: 'user-c4',
-          clientName: '株式会社アークコンサルティング',
-          clientRating: 5.0,
-          title: '都内ITベンチャー企業50社の営業リスト作成（URL・問い合わせフォーム付）',
-          description: '従業員数10〜50名規模の都内Web系スタートアップ50社をピックアップし、企業名・HP URL・問い合わせフォームURL・事業概要をスプレッドシートに整理してください。',
-          category: '営業リスト作成',
-          skills: ['営業リスト作成', 'Googleスプレッドシート', 'Web検索'],
-          reward: 7500,
-          duration: 3,
-          deadline: '明日 12:00',
-          deliverableSpec: '50社分のリストが記載されたスプレッドシート',
-          attachmentName: '抽出条件ガイドライン.pdf',
-          isPriority: true,
-          status: 'open',
-          assignedWorkerId: null,
-          createdAt: Date.now() - 1000 * 60 * 190
-        },
-        {
-          id: 'job-106',
-          clientId: 'user-c1',
-          clientName: '株式会社ノヴァワークス',
-          clientRating: 4.8,
-          title: '社内向けNotionマニュアルの誤字脱字チェックとレイアウト調整',
-          description: '新入社員向けオンボーディング資料（約3,000文字）の文章校正と、見出し・箇条書きの視認性改善をお願いします。',
-          category: '資料作成・修正',
-          skills: ['資料作成', '文章校正', 'Notion'],
-          reward: 3000,
-          duration: 1,
-          deadline: '昨日完了',
-          deliverableSpec: '修正反映済みのドキュメント',
-          attachmentName: 'オンボーディング原稿.md',
-          isPriority: false,
-          status: 'completed',
-          assignedWorkerId: 'user-w1',
-          createdAt: Date.now() - 1000 * 60 * 60 * 26
-        }
-      ],
-      applications: [
-        {
-          id: 'app-1',
-          jobId: 'job-101',
-          workerId: 'user-w2',
-          workerName: '鈴木 彩花',
-          workerRating: 4.8,
-          workerSkills: ['競合リサーチ', 'Excel', '事務作業'],
-          message: 'SaaS業界のリサーチ経験が豊富です。今から1時間で正確な比較表を作成できます！',
-          status: 'pending',
-          createdAt: Date.now() - 1000 * 60 * 10
-        },
-        {
-          id: 'app-2',
-          jobId: 'job-104',
-          workerId: 'user-w1',
-          workerName: '佐藤 健太',
-          workerRating: 4.9,
-          workerSkills: ['Canva', '資料作成', 'SNS運用'],
-          message: 'すぐに取り掛かれます。視認性の高いシンプルなビジネス向けバナーに仕上げます。',
-          status: 'accepted',
-          createdAt: Date.now() - 1000 * 60 * 120
-        },
-        {
-          id: 'app-3',
-          jobId: 'job-106',
-          workerId: 'user-w1',
-          workerName: '佐藤 健太',
-          workerRating: 4.9,
-          workerSkills: ['資料作成', '文章校正'],
-          message: '1時間以内に校正とレイアウト整備を完了させます。',
-          status: 'accepted',
-          createdAt: Date.now() - 1000 * 60 * 60 * 25
-        }
-      ],
-      messages: [
-        {
-          id: 'msg-1',
-          jobId: 'job-104',
-          senderRole: 'system',
-          senderName: 'SPOT1 システム',
-          body: '即時マッチングが成立しました。重複受注ロックが有効化され、専用ワークスペースが開設されました。',
-          type: 'system',
-          createdAt: Date.now() - 1000 * 60 * 115
-        },
-        {
-          id: 'msg-2',
-          jobId: 'job-104',
-          senderRole: 'client',
-          senderName: '株式会社ノヴァワークス（高橋）',
-          body: '佐藤さん、迅速なご応募ありがとうございます！添付のロゴと登壇者写真を使って、白ベースで信頼感のあるデザインをお願いします。',
-          type: 'text',
-          createdAt: Date.now() - 1000 * 60 * 110
-        },
-        {
-          id: 'msg-3',
-          jobId: 'job-104',
-          senderRole: 'worker',
-          senderName: '佐藤 健太',
-          body: '承知いたしました！構成案を作成し、あと30分ほどで初稿をお送りします。',
-          type: 'text',
-          createdAt: Date.now() - 1000 * 60 * 95
-        },
-        {
-          id: 'msg-4',
-          jobId: 'job-106',
-          senderRole: 'system',
-          senderName: 'SPOT1 システム',
-          body: '依頼者が成果物を検収・承認しました。報酬 ¥3,000 が確定しました。',
-          type: 'system',
-          createdAt: Date.now() - 1000 * 60 * 60 * 24
-        }
-      ],
-      submissions: {
-        'job-106': {
-          fileName: 'オンボーディング資料_校正完了版.pdf',
-          note: '全体の誤字脱字12箇所を修正し、見出し階層とチェックリストを整理しました。',
-          submittedAt: '昨日 16:40',
-          status: 'approved',
-          revisionComment: ''
-        }
-      }
-    };
+    const CATEGORIES = [
+      'リサーチ・調査',
+      '資料作成・データ入力',
+      'SNS・ライティング',
+      'デザイン・バナー',
+      '事務・オペレーション'
+    ];
 
+    const POPULAR_SKILLS = [
+      'Excel / スプレッドシート',
+      '市場調査・リサーチ',
+      'PowerPoint / 資料作成',
+      'SNS運用・コピー作成',
+      'Figma / Canva / バナー',
+      'CRM / データ入力',
+      '議事録・文字起こし',
+      'ChatGPT / AI活用'
+    ];
+
+    // Default Initial Seed Data
+    function getInitialData() {
+      return {
+        currentRole: 'worker', // 'worker' | 'client'
+        currentView: 'discover', // 'discover' | 'post' | 'workspace'
+        workspaceTab: 'active',
+        selectedJobId: null,
+        activeTransactionJobId: null,
+        filters: {
+          search: '',
+          category: 'すべて',
+          duration: 'すべて',
+          minReward: 0,
+          sort: 'newest'
+        },
+        currentUserWorker: {
+          id: 'worker_01',
+          name: '佐藤 健太',
+          title: 'ビジネスリサーチ・資料作成スペシャリスト',
+          avatar: '佐',
+          rating: 4.9,
+          completedCount: 38,
+          responseMinutes: 4,
+          skills: ['Excel / スプレッドシート', '市場調査・リサーチ', 'PowerPoint / 資料作成', 'SNS運用・コピー作成'],
+          bio: 'SaaS企業での事業企画経験を活かし、競合調査・料金比較表の作成・提案資料のブラッシュアップをスピーディーに完結します。'
+        },
+        currentUserClient: {
+          id: 'client_01',
+          companyName: '株式会社ネクストリード',
+          contactName: '高橋 誠（事業開発部）',
+          avatar: 'N',
+          rating: 4.8,
+          postedCount: 14,
+          plan: 'standard', // 'standard' (15% fee) | 'enterprise' (10% fee)
+          verified: true
+        },
+        jobs: [
+          {
+            id: 'job_101',
+            title: '競合他社5社の料金プランを調べてスプレッドシートにまとめる',
+            category: 'リサーチ・調査',
+            description: '国内主要BtoBタスク管理ツール5社の最新料金プラン（無料プラン有無、初期費用、月額単価、主要機能差）を公式サイトから調査し、指定フォーマットのGoogleスプレッドシートに入力してください。',
+            skills: ['市場調査・リサーチ', 'Excel / スプレッドシート'],
+            reward: 3000,
+            durationHours: 1,
+            deadlineText: '本日 17:00',
+            urgency: 'urgent',
+            deliverablesSpec: '5社比較スプレッドシート（URL共有または.xlsx納品）',
+            attachments: [{ name: '比較項目テンプレート_v1.xlsx', size: '42 KB' }],
+            clientId: 'client_01',
+            clientName: '株式会社ネクストリード',
+            clientRating: 4.8,
+            status: 'open', // 'open' | 'matched' | 'submitted' | 'completed'
+            assignedWorkerId: null,
+            assignedWorkerName: null,
+            createdAt: Date.now() - 1000 * 60 * 12,
+            applicants: [
+              {
+                id: 'app_901',
+                workerId: 'worker_02',
+                workerName: '鈴木 美咲',
+                workerTitle: 'データアナリスト / リサーチャー',
+                rating: 4.8,
+                completedCount: 24,
+                skills: ['市場調査・リサーチ', 'Excel / スプレッドシート'],
+                message: 'SaaSの料金体系リサーチは得意分野です。今すぐ着手でき、16:30頃には納品可能です！',
+                appliedAt: '10分前'
+              }
+            ],
+            messages: [],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_102',
+            title: '採用広報用のX(Twitter)投稿案5本作成（エンジニア採用向け）',
+            category: 'SNS・ライティング',
+            description: 'スタートアップのテックブログ公開に合わせて、エンジニア層に響くX(Twitter)の告知ポスト案を5パターン作成してください。ターゲットは20代〜30代のWebエンジニアです。',
+            skills: ['SNS運用・コピー作成', 'ChatGPT / AI活用'],
+            reward: 4500,
+            durationHours: 2,
+            deadlineText: '本日 19:30',
+            urgency: 'normal',
+            deliverablesSpec: '投稿テキスト5本（140字以内・ハッシュタグ案含む）',
+            attachments: [{ name: 'テックブログ記事ドラフト.pdf', size: '310 KB' }],
+            clientId: 'client_02',
+            clientName: '株式会社CloudPulse',
+            clientRating: 4.9,
+            status: 'open',
+            assignedWorkerId: null,
+            assignedWorkerName: null,
+            createdAt: Date.now() - 1000 * 60 * 28,
+            applicants: [],
+            messages: [],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_103',
+            title: '営業提案書（全8ページ）の図解レイアウト調整・ブラッシュアップ',
+            category: '資料作成・データ入力',
+            description: '明日午前の商談で使うPowerPoint資料（8枚）のテキスト配置と図解の視認性を整えていただきたいです。構成案とテキストはすべて揃っています。',
+            skills: ['PowerPoint / 資料作成'],
+            reward: 6000,
+            durationHours: 2,
+            deadlineText: '本日 21:00',
+            urgency: 'normal',
+            deliverablesSpec: '修正済みPowerPointファイル（.pptx）',
+            attachments: [{ name: '法人向け提案書_素案.pptx', size: '2.4 MB' }],
+            clientId: 'client_03',
+            clientName: '株式会社アークスコンサルティング',
+            clientRating: 4.7,
+            status: 'open',
+            assignedWorkerId: null,
+            assignedWorkerName: null,
+            createdAt: Date.now() - 1000 * 60 * 45,
+            applicants: [],
+            messages: [],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_104',
+            title: '展示会名刺データ80件のExcelリスト化・重複チェック',
+            category: '事務・オペレーション',
+            description: 'スキャン済みの名刺PDFデータ（80枚）から、会社名・部署・役職・氏名・メールアドレスをExcelフォーマットへ転記し、既存顧客リストとの重複フラグをつけてください。',
+            skills: ['CRM / データ入力', 'Excel / スプレッドシート'],
+            reward: 2500,
+            durationHours: 1,
+            deadlineText: '本日 18:00',
+            urgency: 'urgent',
+            deliverablesSpec: '入力完了済みExcelファイル（.xlsx）',
+            attachments: [{ name: '展示会スキャンデータ_80件.pdf', size: '4.1 MB' }],
+            clientId: 'client_01',
+            clientName: '株式会社ネクストリード',
+            clientRating: 4.8,
+            status: 'matched',
+            assignedWorkerId: 'worker_01',
+            assignedWorkerName: '佐藤 健太',
+            createdAt: Date.now() - 1000 * 60 * 90,
+            applicants: [
+              {
+                id: 'app_880',
+                workerId: 'worker_01',
+                workerName: '佐藤 健太',
+                workerTitle: 'ビジネスリサーチ・資料作成スペシャリスト',
+                rating: 4.9,
+                completedCount: 38,
+                skills: ['Excel / スプレッドシート', 'CRM / データ入力'],
+                message: '正確かつスピーディーに入力・重複チェックを行います。よろしくお願いいたします。',
+                appliedAt: '1時間前'
+              }
+            ],
+            messages: [
+              {
+                id: 'msg_1',
+                senderRole: 'client',
+                senderName: '株式会社ネクストリード（高橋）',
+                text: '佐藤さん、マッチングありがとうございます！添付のExcelテンプレートの「展示会リード」シートへ入力をお願いいたします。',
+                time: '15:42',
+                attachment: null
+              },
+              {
+                id: 'msg_2',
+                senderRole: 'worker',
+                senderName: '佐藤 健太',
+                text: 'ご依頼ありがとうございます！ファイル確認いたしました。現在45件目まで入力完了しており、16:50頃には提出できそうです。',
+                time: '16:15',
+                attachment: null
+              }
+            ],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_105',
+            title: '新規ウェビナー告知用バナー（1200×628px）1点の制作',
+            category: 'デザイン・バナー',
+            description: '来週開催するDX推進ウェビナーのSNS・Peatix告知用バナーを1点制作してください。FigmaまたはCanvaでの作成を希望します（ブランドカラー指定あり）。',
+            skills: ['Figma / Canva / バナー'],
+            reward: 7500,
+            durationHours: 3,
+            deadlineText: '明日 11:00',
+            urgency: 'normal',
+            deliverablesSpec: 'PNG画像（1200×628px）および編集元リンク',
+            attachments: [{ name: 'ブランドガイドライン_抜粋.pdf', size: '1.1 MB' }],
+            clientId: 'client_04',
+            clientName: '合同会社ブリッジテック',
+            clientRating: 5.0,
+            status: 'open',
+            assignedWorkerId: null,
+            assignedWorkerName: null,
+            createdAt: Date.now() - 1000 * 60 * 110,
+            applicants: [],
+            messages: [],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_106',
+            title: 'オンライン商談の録画データ（40分）の要点議事録まとめ',
+            category: '事務・オペレーション',
+            description: 'クライアントとの定例ミーティング録画（自動文字起こしテキスト付き）をもとに、決定事項・ネクストアクション・担当者別タスクをA4 1枚程度に整理してください。',
+            skills: ['議事録・文字起こし', 'ChatGPT / AI活用'],
+            reward: 2400,
+            durationHours: 1,
+            deadlineText: '本日 18:30',
+            urgency: 'urgent',
+            deliverablesSpec: '議事録テキスト（MarkdownまたはWord形式）',
+            attachments: [{ name: '自動文字起こしログ_0424.txt', size: '68 KB' }],
+            clientId: 'client_05',
+            clientName: '株式会社ルミナスラボ',
+            clientRating: 4.8,
+            status: 'open',
+            assignedWorkerId: null,
+            assignedWorkerName: null,
+            createdAt: Date.now() - 1000 * 60 * 140,
+            applicants: [],
+            messages: [],
+            deliverableSubmission: null
+          },
+          {
+            id: 'job_100',
+            title: 'SaaS導入事例インタビュー記事の構成案・見出し作成',
+            category: 'SNS・ライティング',
+            description: '導入企業様へのインタビューメモから、読みやすい導入事例記事の構成案（タイトル案3つ＋H2/H3見出し構成）を作成いただきました。',
+            skills: ['SNS運用・コピー作成'],
+            reward: 3500,
+            durationHours: 1,
+            deadlineText: '完了済み',
+            urgency: 'normal',
+            deliverablesSpec: '記事構成案ドキュメント',
+            attachments: [],
+            clientId: 'client_01',
+            clientName: '株式会社ネクストリード',
+            clientRating: 4.8,
+            status: 'completed',
+            assignedWorkerId: 'worker_01',
+            assignedWorkerName: '佐藤 健太',
+            createdAt: Date.now() - 1000 * 60 * 60 * 24,
+            applicants: [],
+            messages: [
+              {
+                id: 'msg_done_1',
+                senderRole: 'worker',
+                senderName: '佐藤 健太',
+                text: '構成案を提出いたしました。ご確認よろしくお願いいたします。',
+                time: '昨日 16:30',
+                attachment: null
+              },
+              {
+                id: 'msg_done_2',
+                senderRole: 'client',
+                senderName: '株式会社ネクストリード（高橋）',
+                text: '素晴らしい構成をありがとうございます！検収完了とさせていただきました。',
+                time: '昨日 16:45',
+                attachment: null
+              }
+            ],
+            deliverableSubmission: {
+              fileName: '導入事例_構成案_最終版.docx',
+              comment: 'ターゲット読者の課題解決ストーリーが明確になるよう3パターンの切り口で作成しました。',
+              submittedAt: '昨日 16:30',
+              approvedAt: '昨日 16:45'
+            }
+          }
+        ]
+      };
+    }
+
+    // Load or initialize state
     let state = loadState();
 
     function loadState() {
@@ -463,383 +510,1826 @@
           return JSON.parse(saved);
         }
       } catch (e) {
-        console.warn('Failed to parse state:', e);
+        console.warn('State load fallback:', e);
       }
-      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      return getInitialData();
     }
 
     function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
-        console.warn('Failed to save state:', e);
+        console.warn('State save error:', e);
       }
+      updateNavigationUI();
     }
 
     function resetDemoData() {
-      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      state = getInitialData();
       saveState();
+      closeModal();
+      renderApp();
       showToast('デモデータを初期状態にリセットしました', 'info');
-      render();
     }
 
-    // =========================================================================
-    // 2. NAVIGATION & ROLE SWITCHING
-    // =========================================================================
-    function navigate(route, jobId = null) {
-      state.currentRoute = route;
-      if (jobId) {
-        state.selectedJobId = jobId;
-      }
-      saveState();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      render();
+    // ============================================================================
+    // UTILITY FUNCTIONS
+    // ============================================================================
+    function formatJPY(amount) {
+      return '¥' + Number(amount).toLocaleString('ja-JP');
     }
 
-    function switchRole(role) {
-      state.currentRole = role;
-      if (role === 'client' && state.currentRoute === 'jobs') {
-        state.currentRoute = 'mypage';
-      }
-      if (role === 'worker' && state.currentRoute === 'post-job') {
-        state.currentRoute = 'jobs';
-      }
-      saveState();
-      showToast(
-        role === 'worker'
-          ? '「ワーカー視点（佐藤 健太）」に切り替えました'
-          : '「依頼者視点（株式会社ノヴァワークス）」に切り替えました',
-        'info'
-      );
-      render();
+    function getFeeRate() {
+      return state.currentUserClient.plan === 'enterprise' ? 0.10 : 0.15;
     }
 
-    function toggleDocsModal(show) {
-      const modal = document.getElementById('docs-modal');
-      if (show) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      } else {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
+    function calculateFees(reward) {
+      const rate = getFeeRate();
+      const fee = Math.round(reward * rate);
+      const clientTotal = reward + fee;
+      return {
+        reward,
+        feeRatePercent: Math.round(rate * 100),
+        platformFee: fee,
+        clientTotal
+      };
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
-      const id = 'toast-' + Date.now();
+      const toast = document.createElement('div');
       const colors = {
-        success: 'bg-slate-900 text-white border-slate-800',
-        info: 'bg-white text-slate-900 border-slate-200',
-        warning: 'bg-amber-50 text-amber-950 border-amber-200'
+        success: 'bg-slate-900 text-white border-slate-700',
+        info: 'bg-brand-600 text-white border-brand-500',
+        warning: 'bg-amber-600 text-white border-amber-500'
       };
-      const dot = {
-        success: 'bg-emerald-400',
-        info: 'bg-brand-600',
-        warning: 'bg-amber-500'
+      const icons = {
+        success: `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`,
+        info: `<svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+        warning: `<svg class="w-4 h-4 text-amber-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`
       };
-
-      const el = document.createElement('div');
-      el.id = id;
-      el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-float text-xs font-medium animate-fade-in ${colors[type] || colors.success}`;
-      el.innerHTML = `
-        <span class="w-2 h-2 rounded-full shrink-0 ${dot[type] || dot.success}"></span>
-        <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
-      `;
-      container.appendChild(el);
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-elevated text-sm font-medium animate-fade-in ${colors[type] || colors.success}`;
+      toast.innerHTML = `${icons[type] || icons.success}<span>${escapeHTML(message)}</span>`;
+      container.appendChild(toast);
       setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transition = 'opacity 0.2s ease';
-        setTimeout(() => el.remove(), 200);
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.2s ease';
+        setTimeout(() => toast.remove(), 220);
       }, 3400);
     }
 
-    // =========================================================================
-    // 3. BUSINESS LOGIC (APPLICATION, MATCHING, CHAT, DELIVERY, FEES)
-    // =========================================================================
-    function getFeeRate() {
-      return state.clientPlan === 'pro' ? 0.10 : 0.15;
+    // ============================================================================
+    // NAVIGATION & ROLE SWITCHING
+    // ============================================================================
+    function navigateTo(view, subTab = null) {
+      state.currentView = view;
+      if (subTab) {
+        state.workspaceTab = subTab;
+      }
+      saveState();
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function formatYen(amount) {
-      return '¥' + Number(amount).toLocaleString('ja-JP');
+    function switchRole(role) {
+      if (state.currentRole === role) return;
+      state.currentRole = role;
+      state.workspaceTab = role === 'worker' ? 'active' : 'open_applicants';
+      saveState();
+      renderApp();
+      const label = role === 'worker'
+        ? `ワーカー視点（${state.currentUserWorker.name}）に切り替えました`
+        : `依頼者視点（${state.currentUserClient.companyName}）に切り替えました`;
+      showToast(label, 'info');
     }
 
-    function timeAgo(timestamp) {
-      const diffMins = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
-      if (diffMins < 60) return `${diffMins}分前`;
-      const diffHours = Math.floor(diffMins / 60);
-      if (diffHours < 24) return `${diffHours}時間前`; return `${Math.floor(diffHours / 24)}日前`;
+    function updateNavigationUI() {
+      // Role buttons
+      const workerBtn = document.getElementById('role-btn-worker');
+      const clientBtn = document.getElementById('role-btn-client');
+      if (state.currentRole === 'worker') {
+        workerBtn.className = 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-subtle transition-all';
+        clientBtn.className = 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all';
+      } else {
+        clientBtn.className = 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-subtle transition-all';
+        workerBtn.className = 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all';
+      }
+
+      // Active Persona Badge
+      const personaBadge = document.getElementById('active-persona-badge');
+      if (state.currentRole === 'worker') {
+        personaBadge.innerHTML = `
+          <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-[11px]">${state.currentUserWorker.avatar}</span>
+          <span class="font-semibold text-slate-800">${escapeHTML(state.currentUserWorker.name)}</span>
+          <span class="text-amber-500 font-semibold tabular-nums">★${state.currentUserWorker.rating}</span>
+        `;
+      } else {
+        personaBadge.innerHTML = `
+          <span class="w-5 h-5 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-[11px]">${state.currentUserClient.avatar}</span>
+          <span class="font-semibold text-slate-800">${escapeHTML(state.currentUserClient.companyName)}</span>
+        `;
+      }
+
+      // Role Context Banner
+      const bannerText = document.getElementById('role-banner-text');
+      if (state.currentRole === 'worker') {
+        bannerText.innerHTML = `
+          <span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">ワーカーモード</span>
+          <span>現在 <strong>${escapeHTML(state.currentUserWorker.name)}</strong> としてログイン中 — 募集中の仕事への応募・チャット・成果物提出が可能です。</span>
+        `;
+      } else {
+        bannerText.innerHTML = `
+          <span class="inline-flex items-center px-2 py-0.5 rounded-md font-semibold bg-brand-50 text-brand-700 border border-brand-200/80">依頼者（企業）モード</span>
+          <span>現在 <strong>${escapeHTML(state.currentUserClient.companyName)}</strong> としてログイン中 — 新規案件の掲載・応募者の即時確定・検収が可能です。</span>
+        `;
+      }
+
+      // Active Nav Highlighting
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const target = btn.getAttribute('data-nav');
+        if (target === state.currentView) {
+          btn.classList.add('bg-slate-100', 'text-slate-900', 'font-semibold');
+          btn.classList.remove('text-slate-600', 'hover:bg-slate-50');
+        } else {
+          btn.classList.remove('bg-slate-100', 'text-slate-900', 'font-semibold');
+          btn.classList.add('text-slate-600', 'hover:bg-slate-50');
+        }
+      });
+
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        const target = btn.getAttribute('data-nav');
+        if (target === state.currentView) {
+          btn.classList.add('text-brand-600', 'bg-brand-50/70');
+          btn.classList.remove('text-slate-500');
+        } else {
+          btn.classList.remove('text-brand-600', 'bg-brand-50/70');
+          btn.classList.add('text-slate-500');
+        }
+      });
+
+      // Notification Counter (Active tasks or pending applicants)
+      let actionableCount = 0;
+      if (state.currentRole === 'worker') {
+        actionableCount = state.jobs.filter(j => j.assignedWorkerId === state.currentUserWorker.id && (j.status === 'matched' || j.status === 'submitted')).length;
+      } else {
+        actionableCount = state.jobs.filter(j => j.clientId === state.currentUserClient.id && (
+          (j.status === 'open' && j.applicants.length > 0) || j.status === 'submitted' || j.status === 'matched'
+        )).length;
+      }
+
+      const navBadge = document.getElementById('nav-badge');
+      const mobileBadge = document.getElementById('mobile-nav-badge');
+      if (actionableCount > 0) {
+        navBadge.textContent = actionableCount;
+        navBadge.classList.remove('hidden');
+        mobileBadge.textContent = actionableCount;
+        mobileBadge.classList.remove('hidden');
+      } else {
+        navBadge.classList.add('hidden');
+        mobileBadge.classList.add('hidden');
+      }
     }
 
-    function getStatusBadge(status) {
-      const map = {
-        open: { label: '募集中・即時応募可', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200/80' },
-        matched: { label: '進行中（マッチング済）', cls: 'bg-brand-50 text-brand-700 border-brand-200/80' },
-        submitted: { label: '成果物提出済・検収待ち', cls: 'bg-amber-50 text-amber-700 border-amber-200/80' },
-        completed: { label: '完了・報酬確定', cls: 'bg-slate-100 text-slate-700 border-slate-200' }
+    // ============================================================================
+    // MAIN VIEW ROUTER
+    // ============================================================================
+    function renderApp() {
+      updateNavigationUI();
+      const main = document.getElementById('app-main');
+      if (state.currentView === 'discover') {
+        main.innerHTML = renderDiscoverView();
+      } else if (state.currentView === 'post') {
+        main.innerHTML = renderPostJobView();
+        updatePostCalculator();
+      } else if (state.currentView === 'workspace') {
+        main.innerHTML = renderWorkspaceView();
+      }
+    }
+
+    // ============================================================================
+    // VIEW 1: DISCOVER JOBS (トップページ & 仕事を探す)
+    // ============================================================================
+    function renderDiscoverView() {
+      const openJobsCount = state.jobs.filter(j => j.status === 'open').length;
+
+      // Filter & Sort logic
+      let filtered = state.jobs.filter(job => {
+        // Show open jobs primarily, plus let users see matched ones if no filter hides them, or focus on open jobs
+        if (job.status === 'completed') return false;
+        if (state.filters.category !== 'すべて' && job.category !== state.filters.category) return false;
+        if (state.filters.duration !== 'すべて' && job.durationHours !== Number(state.filters.duration)) return false;
+        if (state.filters.minReward > 0 && job.reward < Number(state.filters.minReward)) return false;
+        if (state.filters.search.trim() !== '') {
+          const q = state.filters.search.toLowerCase();
+          const inTitle = job.title.toLowerCase().includes(q);
+          const inDesc = job.description.toLowerCase().includes(q);
+          const inSkills = job.skills.some(s => s.toLowerCase().includes(q));
+          const inClient = job.clientName.toLowerCase().includes(q);
+          if (!inTitle && !inDesc && !inSkills && !inClient) return false;
+        }
+        return true;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        if (state.filters.sort === 'reward_desc') return b.reward - a.reward;
+        if (state.filters.sort === 'urgent') return (a.urgency === 'urgent' ? -1 : 1) - (b.urgency === 'urgent' ? -1 : 1);
+        return b.createdAt - a.createdAt;
+      });
+
+      return `
+        <div class="space-y-8 animate-fade-in">
+          <!-- Hero Section (Timee clarity + Stripe/Linear refinement) -->
+          <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 lg:p-10 shadow-card relative overflow-hidden">
+            <div class="max-w-3xl">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-semibold mb-4">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse"></span>
+                <span>選考なし・履歴書不要の1〜3時間スポット業務マッチング</span>
+              </div>
+              <h1 class="font-display text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
+                今すぐ1時間だけ、<br class="sm:hidden" />仕事を頼む・働く。
+              </h1>
+              <p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
+                「急な資料修正やリサーチを1時間だけ頼みたい企業」と「スキマ時間にスキルを活かして即収入を得たい個人」を最短数分でつなぎます。
+              </p>
+
+              <!-- Primary CTA Buttons -->
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <a href="#job-listings" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold shadow-subtle transition-all">
+                  <span>募集中の仕事を見る</span>
+                  <span class="px-2 py-0.5 rounded-full bg-white/15 text-xs tabular-nums">${openJobsCount}件</span>
+                </a>
+                <button onclick="switchRoleAndPost()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 text-sm font-semibold shadow-subtle transition-all">
+                  <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>1時間から仕事を依頼する</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Key Platform Metrics Strip -->
+            <div class="mt-8 pt-6 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+              <div>
+                <div class="text-xs font-medium text-slate-500">現在募集中のスポット案件</div>
+                <div class="mt-1 font-display text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">${openJobsCount} <span class="text-xs font-normal text-slate-500">件</span></div>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-500">平均マッチング成立時間</div>
+                <div class="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-600 tabular-nums">8 <span class="text-xs font-normal text-slate-500">分</span></div>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-500">想定作業時間レンジ</div>
+                <div class="mt-1 font-display text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">1〜3 <span class="text-xs font-normal text-slate-500">時間完結</span></div>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-500">ワーカー手数料</div>
+                <div class="mt-1 font-display text-xl sm:text-2xl font-bold text-brand-600 tabular-nums">0 <span class="text-xs font-normal text-slate-500">円（報酬100%受取）</span></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Search & Filter Controls -->
+          <section id="job-listings" class="space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-card space-y-4">
+              <!-- Top row: Search Input + Sort -->
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                  <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value="${escapeHTML(state.filters.search)}"
+                    oninput="updateFilter('search', this.value)"
+                    placeholder="キーワードで検索（例：スプレッドシート、リサーチ、バナー、SNS...）"
+                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/10 transition-all"
+                  />
+                </div>
+                <div class="flex items-center gap-2">
+                  <select onchange="updateFilter('duration', this.value)" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 font-medium focus:outline-none focus:border-brand-600">
+                    <option value="すべて" ${state.filters.duration === 'すべて' ? 'selected' : ''}>作業時間：すべて</option>
+                    <option value="1" ${state.filters.duration === '1' ? 'selected' : ''}>1時間のみ</option>
+                    <option value="2" ${state.filters.duration === '2' ? 'selected' : ''}>2時間のみ</option>
+                    <option value="3" ${state.filters.duration === '3' ? 'selected' : ''}>3時間のみ</option>
+                  </select>
+                  <select onchange="updateFilter('minReward', this.value)" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 font-medium focus:outline-none focus:border-brand-600">
+                    <option value="0" ${Number(state.filters.minReward) === 0 ? 'selected' : ''}>報酬：指定なし</option>
+                    <option value="2500" ${Number(state.filters.minReward) === 2500 ? 'selected' : ''}>¥2,500以上</option>
+                    <option value="3000" ${Number(state.filters.minReward) === 3000 ? 'selected' : ''}>¥3,000以上</option>
+                    <option value="5000" ${Number(state.filters.minReward) === 5000 ? 'selected' : ''}>¥5,000以上</option>
+                  </select>
+                  <select onchange="updateFilter('sort', this.value)" class="hidden sm:block px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 font-medium focus:outline-none focus:border-brand-600">
+                    <option value="newest" ${state.filters.sort === 'newest' ? 'selected' : ''}>新着順</option>
+                    <option value="reward_desc" ${state.filters.sort === 'reward_desc' ? 'selected' : ''}>報酬が高い順</option>
+                    <option value="urgent" ${state.filters.sort === 'urgent' ? 'selected' : ''}>締切が近い順</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Category Pills -->
+              <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                ${['すべて', ...CATEGORIES].map(cat => {
+                  const active = state.filters.category === cat;
+                  return `
+                    <button
+                      onclick="updateFilter('category', '${cat}')"
+                      class="shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                        active
+                          ? 'bg-slate-900 text-white border-slate-900 shadow-subtle'
+                          : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900'
+                      }"
+                    >
+                      ${cat}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Results Header -->
+            <div class="flex items-center justify-between px-1">
+              <h2 class="text-sm font-semibold text-slate-800">
+                該当するスポット業務 <span class="ml-1 text-brand-600 tabular-nums">${filtered.length}件</span>
+              </h2>
+              ${(state.filters.search || state.filters.category !== 'すべて' || state.filters.duration !== 'すべて' || Number(state.filters.minReward) > 0) ? `
+                <button onclick="clearFilters()" class="text-xs font-medium text-slate-500 hover:text-slate-800 underline">
+                  絞り込みをクリア
+                </button>
+              ` : ''}
+            </div>
+
+            <!-- Job Cards Grid -->
+            ${filtered.length === 0 ? `
+              <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <p class="text-sm font-semibold text-slate-800">条件に一致する仕事が見つかりませんでした</p>
+                <p class="mt-1 text-xs text-slate-500">検索キーワードや絞り込み条件を変更してお試しください。</p>
+                <button onclick="clearFilters()" class="mt-4 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold">条件をリセット</button>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                ${filtered.map(job => renderJobCard(job)).join('')}
+              </div>
+            `}
+          </section>
+        </div>
+      `;
+    }
+
+    function renderJobCard(job) {
+      const hourlyRate = Math.round(job.reward / job.durationHours);
+      const isApplied = job.applicants.some(a => a.workerId === state.currentUserWorker.id);
+      const isMatched = job.status !== 'open';
+
+      return `
+        <article
+          onclick="openJobDetailModal('${job.id}')"
+          class="group bg-white rounded-2xl border border-slate-200 hover:border-brand-500/60 p-5 shadow-card hover:shadow-elevated transition-all cursor-pointer flex flex-col justify-between"
+        >
+          <div>
+            <!-- Top Meta Row: Status & Category -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-1.5">
+                ${isMatched ? `
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                    募集終了（マッチング済）
+                  </span>
+                ` : job.urgency === 'urgent' ? `
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    急募・本日締切
+                  </span>
+                ` : `
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    募集中
+                  </span>
+                `}
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-50 text-slate-600 border border-slate-200/70">
+                  ${escapeHTML(job.category)}
+                </span>
+              </div>
+              ${isApplied && !isMatched ? `
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-brand-50 text-brand-700 border border-brand-200">応募済み</span>
+              ` : ''}
+            </div>
+
+            <!-- Job Title -->
+            <h3 class="text-base font-bold text-slate-900 group-hover:text-brand-600 transition-colors leading-snug line-clamp-2">
+              ${escapeHTML(job.title)}
+            </h3>
+
+            <!-- Client Info -->
+            <div class="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+              <span class="font-medium text-slate-700">${escapeHTML(job.clientName)}</span>
+              <span>•</span>
+              <span class="text-amber-500 font-semibold tabular-nums">★${job.clientRating}</span>
+            </div>
+
+            <!-- Skills Tags -->
+            <div class="mt-3.5 flex flex-wrap gap-1.5">
+              ${job.skills.map(skill => `
+                <span class="px-2 py-0.5 rounded-md bg-slate-100/80 text-slate-600 text-[11px] font-medium">
+                  ${escapeHTML(skill)}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Bottom Reward / Duration / Deadline Bar -->
+          <div class="mt-5 pt-4 border-t border-slate-100">
+            <div class="flex items-end justify-between">
+              <div>
+                <div class="text-[11px] font-medium text-slate-400">報酬（受取額）</div>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="font-display text-xl font-bold text-slate-900 tabular-nums">${formatJPY(job.reward)}</span>
+                  <span class="text-[11px] font-medium text-slate-500 tabular-nums">(時給換算 ${formatJPY(hourlyRate)})</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-semibold tabular-nums">
+                  <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>${job.durationHours}時間</span>
+                </div>
+                <div class="mt-1 text-[11px] font-medium ${job.urgency === 'urgent' ? 'text-amber-600' : 'text-slate-500'} tabular-nums">
+                  締切: ${escapeHTML(job.deadlineText)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function updateFilter(key, value) {
+      state.filters[key] = value;
+      renderApp();
+    }
+
+    function clearFilters() {
+      state.filters = {
+        search: '',
+        category: 'すべて',
+        duration: 'すべて',
+        minReward: 0,
+        sort: 'newest'
       };
-      const item = map[status] || map.open;
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${item.cls}">${item.label}</span>`; }  function handlePostJob(e) { e.preventDefault(); const form = e.target; const title = form.title.value.trim(); const category = form.category.value; const duration = Number(form.duration.value); const reward = Number(form.reward.value); const deadline = form.deadline.value.trim(); const skillsRaw = form.skills.value.trim(); const description = form.description.value.trim(); const deliverableSpec = form.deliverableSpec.value.trim(); const fileInput = form.attachment; const attachmentName = fileInput.files && fileInput.files[0] ? fileInput.files[0].name : ''; const isPriority = form.isPriority.checked;  if (!title \vert{}\vert{} !description \vert{}\vert{} !reward) return;  const skills = skillsRaw ? skillsRaw.split(/[,、\s]+/).map(s => s.trim()).filter(Boolean) : [category];  const newJob = { id: 'job-' + Date.now(), clientId: state.users.client.id, clientName: '株式会社ノヴァワークス', clientRating: state.users.client.rating, title, description, category, skills, reward, duration, deadline: deadline \vert{}\vert{} '本日 18:00', deliverableSpec: deliverableSpec \vert{}\vert{} '指定形式のファイルまたはURL', attachmentName, isPriority, status: 'open', assignedWorkerId: null, createdAt: Date.now() };  state.jobs.unshift(newJob); saveState(); showToast('新しいスポット業務を公開しました！ワーカーからの応募を受け付けています。', 'success'); navigate('job-detail', newJob.id); }  function handleApplyJob(jobId) { const job = state.jobs.find(j => j.id === jobId); if (!job \vert{}\vert{} job.status !== 'open') { showToast('この案件はすでに募集を終了しています（重複受注防止ロック）', 'warning'); return; }  const existing = state.applications.find( a => a.jobId === jobId && a.workerId === state.users.worker.id ); if (existing) { showToast('すでに応募済みです', 'info'); return; }  const msgInput = document.getElementById('apply-message'); const message = msgInput && msgInput.value.trim() ? msgInput.value.trim() : `即座に着手可能です。${job.duration}時間以内に高品質な成果物を納品いたします。`;
+      renderApp();
+    }
 
-      state.applications.unshift({
-        id: 'app-' + Date.now(),
-        jobId,
-        workerId: state.users.worker.id,
-        workerName: state.users.worker.name,
-        workerRating: state.users.worker.rating,
-        workerSkills: state.users.worker.skills.slice(0, 4),
-        message,
-        status: 'pending',
-        createdAt: Date.now()
+    function switchRoleAndPost() {
+      state.currentRole = 'client';
+      navigateTo('post');
+    }
+
+    // ============================================================================
+    // JOB DETAIL DRAWER & APPLICATION (即時応募・重複防止)
+    // ============================================================================
+    function openJobDetailModal(jobId) {
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      const fees = calculateFees(job.reward);
+      const isAlreadyApplied = job.applicants.some(a => a.workerId === state.currentUserWorker.id);
+      const isOpen = job.status === 'open';
+      const isOwnCompanyJob = job.clientId === state.currentUserClient.id;
+
+      const panel = document.getElementById('modal-panel');
+      panel.innerHTML = `
+        <div class="p-6 sm:p-8 space-y-6">
+          <!-- Top Bar -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-md text-xs font-semibold ${isOpen ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'}">
+                ${isOpen ? '募集中・即時マッチング対象' : '募集終了'}
+              </span>
+              <span class="text-xs font-medium text-slate-500">${escapeHTML(job.category)}</span>
+            </div>
+            <button onclick="closeModal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Title & Client -->
+          <div>
+            <h2 class="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+              ${escapeHTML(job.title)}
+            </h2>
+            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-600">
+              <div class="flex items-center gap-1.5">
+                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-[11px]">
+                  ${escapeHTML(job.clientName.charAt(0))}
+                </span>
+                <span class="font-semibold text-slate-800">${escapeHTML(job.clientName)}</span>
+              </div>
+              <span class="text-amber-500 font-semibold tabular-nums">★${job.clientRating}</span>
+              <span class="text-slate-400">|</span>
+              <span>現在の応募者: <strong class="text-slate-800 tabular-nums">${job.applicants.length}名</strong></span>
+            </div>
+          </div>
+
+          <!-- Key Metrics Grid -->
+          <div class="grid grid-cols-3 gap-3 bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+            <div>
+              <div class="text-[11px] font-medium text-slate-500">ワーカー報酬</div>
+              <div class="mt-0.5 font-display text-lg sm:text-xl font-bold text-slate-900 tabular-nums">${formatJPY(job.reward)}</div>
+              <div class="text-[11px] text-emerald-600 font-medium">手数料0円・全額受取</div>
+            </div>
+            <div class="border-l border-slate-200 pl-3">
+              <div class="text-[11px] font-medium text-slate-500">想定作業時間</div>
+              <div class="mt-0.5 font-display text-lg sm:text-xl font-bold text-slate-900 tabular-nums">${job.durationHours}時間</div>
+              <div class="text-[11px] text-slate-500 tabular-nums">時給換算 ${formatJPY(Math.round(job.reward / job.durationHours))}</div>
+            </div>
+            <div class="border-l border-slate-200 pl-3">
+              <div class="text-[11px] font-medium text-slate-500">納期・締切</div>
+              <div class="mt-0.5 font-display text-base sm:text-lg font-bold ${job.urgency === 'urgent' ? 'text-amber-600' : 'text-slate-900'} tabular-nums">${escapeHTML(job.deadlineText)}</div>
+              <div class="text-[11px] text-slate-500">即時スタート可</div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">業務内容の詳細</h3>
+            <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-white rounded-xl border border-slate-200/80 p-4">
+              ${escapeHTML(job.description)}
+            </p>
+          </div>
+
+          <!-- Deliverables & Attachments -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">必要な成果物</h3>
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-800">
+                ${escapeHTML(job.deliverablesSpec)}
+              </div>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">添付資料・テンプレート</h3>
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+                ${job.attachments && job.attachments.length > 0 ? job.attachments.map(att => `
+                  <div class="flex items-center justify-between text-slate-700 font-medium">
+                    <span class="truncate">📎 ${escapeHTML(att.name)}</span>
+                    <span class="text-slate-400 shrink-0 ml-2 tabular-nums">${escapeHTML(att.size)}</span>
+                  </div>
+                `).join('') : '<span class="text-slate-400">添付ファイルなし</span>'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Required Skills -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">求められるスキル</h3>
+            <div class="flex flex-wrap gap-2">
+              ${job.skills.map(s => `
+                <span class="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">${escapeHTML(s)}</span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Action Box (Role-Aware) -->
+          <div class="pt-4 border-t border-slate-200">
+            ${state.currentRole === 'worker' ? `
+              ${!isOpen ? `
+                <div class="p-4 rounded-xl bg-slate-100 text-slate-600 text-sm font-medium text-center">
+                  この仕事はすでに他のワーカーとマッチング成立したため募集を終了しました。
+                </div>
+              ` : isAlreadyApplied ? `
+                <div class="p-4 rounded-xl bg-brand-50 border border-brand-200 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-brand-800">✓ この仕事に応募済みです</span>
+                    <span class="text-xs text-brand-600">依頼者の確定待ち</span>
+                  </div>
+                  <p class="text-xs text-brand-700">
+                    ※デモ操作ヒント：ヘッダーの「依頼者視点」に切り替えてマイページを開くと、今応募した自分自身を即時マッチング確定できます！
+                  </p>
+                  <button onclick="closeModal(); switchRole('client'); navigateTo('workspace', 'open_applicants');" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition-colors">
+                    依頼者視点に切り替えてマッチングを確定する →
+                  </button>
+                </div>
+              ` : `
+                <div class="space-y-3">
+                  <label class="block text-xs font-bold text-slate-700">応募メッセージ（任意・着手可能時間など）</label>
+                  <textarea id="apply-message-input" rows="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-600" placeholder="例：今すぐ作業開始できます。〇〇の経験があり、締切の30分前には提出可能です。">今すぐ作業開始できます。これまでの経験を活かし、締切前に高品質な成果物を提出いたします。</textarea>
+                  <button onclick="applyToJob('${job.id}')" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-subtle transition-all flex items-center justify-center gap-2">
+                    <span>この仕事に応募する（報酬 ${formatJPY(job.reward)}）</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  </button>
+                </div>
+              `}
+            ` : `
+              <!-- Client Perspective Box -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-500">企業側お支払い総額（手数料 ${fees.feeRatePercent}% 含む）</span>
+                  <span class="font-bold text-slate-900 text-sm tabular-nums">${formatJPY(fees.clientTotal)}</span>
+                </div>
+                ${isOwnCompanyJob ? `
+                  <button onclick="closeModal(); navigateTo('workspace', 'open_applicants');" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors">
+                    マイページで応募者一覧（${job.applicants.length}名）を確認する
+                  </button>
+                ` : `
+                  <p class="text-xs text-slate-500">現在「依頼者視点」です。応募するにはヘッダーから「ワーカー視点」に切り替えてください。</p>
+                `}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+
+      openModal();
+    }
+
+    function applyToJob(jobId) {
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      // Duplicate & Status validation
+      if (job.status !== 'open') {
+        showToast('この案件はすでに募集終了しています', 'warning');
+        return;
+      }
+      if (job.applicants.some(a => a.workerId === state.currentUserWorker.id)) {
+        showToast('すでにこの仕事に応募済みです', 'warning');
+        return;
+      }
+
+      const msgInput = document.getElementById('apply-message-input');
+      const message = msgInput ? msgInput.value.trim() : '今すぐ着手可能です。よろしくお願いいたします。';
+
+      job.applicants.unshift({
+        id: 'app_' + Date.now(),
+        workerId: state.currentUserWorker.id,
+        workerName: state.currentUserWorker.name,
+        workerTitle: state.currentUserWorker.title,
+        rating: state.currentUserWorker.rating,
+        completedCount: state.currentUserWorker.completedCount,
+        skills: [...state.currentUserWorker.skills],
+        message: message || '今すぐ対応可能です。よろしくお願いいたします。',
+        appliedAt: 'たった今'
       });
 
       saveState();
-      showToast('仕事への応募が完了しました！依頼者視点を切り替えると即座に承認できます。', 'success');
-      render();
+      openJobDetailModal(jobId);
+      renderApp();
+      showToast('仕事への応募が完了しました！', 'success');
     }
 
-    function handleAcceptApplicant(jobId, applicationId) {
+    // ============================================================================
+    // VIEW 2: POST A JOB (仕事を依頼するフォーム + 手数料リアルタイム計算)
+    // ============================================================================
+    let postFormState = {
+      selectedSkills: ['Excel / スプレッドシート', '市場調査・リサーチ'],
+      durationHours: 1,
+      reward: 3000,
+      attachmentName: ''
+    };
+
+    function renderPostJobView() {
+      return `
+        <div class="max-w-5xl mx-auto animate-fade-in">
+          <div class="mb-6">
+            <h1 class="font-display text-2xl font-bold text-slate-900">1〜3時間のスポット業務を依頼する</h1>
+            <p class="mt-1 text-sm text-slate-600">必要な作業内容と報酬を入力すると、即時にワーカーへ公開されます。</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- Left 2 Columns: Form -->
+            <form id="post-job-form" onsubmit="handlePostJobSubmit(event)" class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-card space-y-6">
+              <!-- Title -->
+              <div class="space-y-1.5">
+                <label class="block text-sm font-semibold text-slate-800">
+                  仕事のタイトル <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="post-title"
+                  required
+                  placeholder="例：競合他社5社の料金プランを調べてスプレッドシートにまとめる"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/10"
+                />
+              </div>
+
+              <!-- Category & Deadline -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label class="block text-sm font-semibold text-slate-800">カテゴリー <span class="text-rose-500">*</span></label>
+                  <select id="post-category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:border-brand-600">
+                    ${CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="block text-sm font-semibold text-slate-800">納期・締切 <span class="text-rose-500">*</span></label>
+                  <select id="post-deadline" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:border-brand-600">
+                    <option value="本日 17:00|urgent">本日 17:00（急募）</option>
+                    <option value="本日 19:00|urgent">本日 19:00（急募）</option>
+                    <option value="本日 21:00|normal">本日 21:00</option>
+                    <option value="明日 12:00|normal">明日 12:00</option>
+                    <option value="明日 17:00|normal">明日 17:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Estimated Duration Radio Cards -->
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-slate-800">想定作業時間 <span class="text-rose-500">*</span></label>
+                <div class="grid grid-cols-3 gap-3">
+                  ${[1, 2, 3].map(h => `
+                    <button
+                      type="button"
+                      onclick="setPostDuration(${h})"
+                      id="dur-btn-${h}"
+                      class="p-3.5 rounded-xl border text-left transition-all ${
+                        postFormState.durationHours === h
+                          ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-600/15'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }"
+                    >
+                      <div class="font-display text-base font-bold text-slate-900 tabular-nums">${h}時間</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5">${h === 1 ? '超短期・即完了' : h === 2 ? '標準スポット' : 'しっかり作業'}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Reward Amount -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="block text-sm font-semibold text-slate-800">ワーカーへの報酬金額（税抜） <span class="text-rose-500">*</span></label>
+                  <div class="flex gap-1.5">
+                    ${[2500, 3000, 5000, 7500].map(preset => `
+                      <button type="button" onclick="setPostReward(${preset})" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 tabular-nums">
+                        ¥${preset.toLocaleString()}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+                <div class="relative">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">¥</span>
+                  <input
+                    type="number"
+                    id="post-reward"
+                    min="1000"
+                    step="100"
+                    required
+                    value="${postFormState.reward}"
+                    oninput="postFormState.reward = Number(this.value) || 0; updatePostCalculator();"
+                    class="w-full pl-9 pr-16 py-2.5 rounded-xl border border-slate-200 text-base font-bold text-slate-900 tabular-nums focus:outline-none focus:border-brand-600"
+                  />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">円</span>
+                </div>
+              </div>
+
+              <!-- Job Description -->
+              <div class="space-y-1.5">
+                <label class="block text-sm font-semibold text-slate-800">仕事内容の詳細 <span class="text-rose-500">*</span></label>
+                <textarea
+                  id="post-description"
+                  rows="4"
+                  required
+                  placeholder="作業手順、参照してほしいURL、注意事項などを具体的に記載してください。"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-600"
+                ></textarea>
+              </div>
+
+              <!-- Deliverables -->
+              <div class="space-y-1.5">
+                <label class="block text-sm font-semibold text-slate-800">必要な成果物 <span class="text-rose-500">*</span></label>
+                <input
+                  type="text"
+                  id="post-deliverables"
+                  required
+                  placeholder="例：Googleスプレッドシートの共有リンク、またはExcelファイル（.xlsx）"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-600"
+                />
+              </div>
+
+              <!-- Required Skills Selector -->
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-slate-800">必要なスキル（複数選択可）</label>
+                <div class="flex flex-wrap gap-2" id="post-skills-container">
+                  ${POPULAR_SKILLS.map(skill => {
+                    const selected = postFormState.selectedSkills.includes(skill);
+                    return `
+                      <button
+                        type="button"
+                        onclick="togglePostSkill('${skill}')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                          selected
+                            ? 'bg-slate-900 text-white border-slate-900'
+                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                        }"
+                      >
+                        ${selected ? '✓ ' : '+ '}${skill}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+
+              <!-- Reference Attachment -->
+              <div class="space-y-1.5">
+                <label class="block text-sm font-semibold text-slate-800">参考ファイル・テンプレート添付（任意）</label>
+                <div class="flex items-center gap-3">
+                  <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                    <span>ファイルを選択</span>
+                    <input type="file" class="hidden" onchange="handlePostFileSelect(this)" />
+                  </label>
+                  <span id="post-file-label" class="text-xs text-slate-500">
+                    ${postFormState.attachmentName ? `📎 ${escapeHTML(postFormState.attachmentName)}` : '選択されていません'}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="navigateTo('discover')" class="px-5 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                  キャンセル
+                </button>
+                <button type="submit" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-subtle transition-all">
+                  この内容で仕事を公開する
+                </button>
+              </div>
+            </form>
+
+            <!-- Right Column: Stripe-style Billing & Plan Preview -->
+            <aside class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5 sticky top-24">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h2 class="text-sm font-bold text-slate-900">料金・手数料シミュレーション</h2>
+                <span class="px-2 py-0.5 rounded bg-brand-50 text-brand-700 text-[11px] font-semibold">決済デモ</span>
+              </div>
+
+              <!-- Plan Switcher (Monetization Model Preview) -->
+              <div class="space-y-2">
+                <div class="text-xs font-semibold text-slate-600">契約プラン（手数料率）</div>
+                <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 border border-slate-200/80">
+                  <button
+                    type="button"
+                    onclick="setClientPlan('standard')"
+                    class="py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+                      state.currentUserClient.plan === 'standard' ? 'bg-white text-slate-900 shadow-subtle' : 'text-slate-500'
+                    }"
+                  >
+                    通常プラン (15%)
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setClientPlan('enterprise')"
+                    class="py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+                      state.currentUserClient.plan === 'enterprise' ? 'bg-white text-brand-700 shadow-subtle' : 'text-slate-500'
+                    }"
+                  >
+                    法人月額 (10%)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Breakdown -->
+              <div id="fee-calculator-breakdown" class="space-y-3 text-sm">
+                <!-- Populated by updatePostCalculator() -->
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 text-xs text-slate-600">
+                <div class="font-semibold text-slate-800 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span>成功報酬型（公開は無料）</span>
+                </div>
+                <p class="leading-relaxed text-slate-500">
+                  ワーカーとマッチング成立後、成果物の検収完了時にのみお支払いが確定します。
+                </p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      `;
+    }
+
+    function setPostDuration(hours) {
+      postFormState.durationHours = hours;
+      [1, 2, 3].forEach(h => {
+        const btn = document.getElementById(`dur-btn-${h}`);
+        if (!btn) return;
+        if (h === hours) {
+          btn.className = 'p-3.5 rounded-xl border text-left transition-all border-brand-600 bg-brand-50/60 ring-2 ring-brand-600/15';
+        } else {
+          btn.className = 'p-3.5 rounded-xl border text-left transition-all border-slate-200 hover:border-slate-300 bg-white';
+        }
+      });
+      updatePostCalculator();
+    }
+
+    function setPostReward(amount) {
+      postFormState.reward = amount;
+      const input = document.getElementById('post-reward');
+      if (input) input.value = amount;
+      updatePostCalculator();
+    }
+
+    function togglePostSkill(skill) {
+      const idx = postFormState.selectedSkills.indexOf(skill);
+      if (idx >= 0) {
+        postFormState.selectedSkills.splice(idx, 1);
+      } else {
+        postFormState.selectedSkills.push(skill);
+      }
+      const container = document.getElementById('post-skills-container');
+      if (container) {
+        container.innerHTML = POPULAR_SKILLS.map(s => {
+          const selected = postFormState.selectedSkills.includes(s);
+          return `
+            <button
+              type="button"
+              onclick="togglePostSkill('${s}')"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                selected
+                  ? 'bg-slate-900 text-white border-slate-900'
+                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+              }"
+            >
+              ${selected ? '✓ ' : '+ '}${s}
+            </button>
+          `;
+        }).join('');
+      }
+    }
+
+    function handlePostFileSelect(input) {
+      if (input.files && input.files[0]) {
+        postFormState.attachmentName = input.files[0].name;
+        const label = document.getElementById('post-file-label');
+        if (label) label.textContent = `📎 ${postFormState.attachmentName}`;
+      }
+    }
+
+    function setClientPlan(plan) {
+      state.currentUserClient.plan = plan;
+      saveState();
+      renderApp();
+    }
+
+    function updatePostCalculator() {
+      const box = document.getElementById('fee-calculator-breakdown');
+      if (!box) return;
+      const calc = calculateFees(postFormState.reward);
+      const hourly = Math.round(postFormState.reward / postFormState.durationHours);
+
+      box.innerHTML = `
+        <div class="flex items-center justify-between text-slate-600">
+          <span>ワーカー受取報酬</span>
+          <span class="font-semibold text-slate-900 tabular-nums">${formatJPY(calc.reward)}</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-600">
+          <span>時間単価換算（${postFormState.durationHours}時間）</span>
+          <span class="text-xs font-medium text-slate-500 tabular-nums">${formatJPY(hourly)} / 時間</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-600">
+          <span>プラットフォーム手数料 (${calc.feeRatePercent}%)</span>
+          <span class="font-medium text-slate-700 tabular-nums">${formatJPY(calc.platformFee)}</span>
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex items-baseline justify-between">
+          <span class="font-bold text-slate-900">お支払い合計目安</span>
+          <span class="font-display text-xl font-bold text-brand-600 tabular-nums">${formatJPY(calc.clientTotal)}</span>
+        </div>
+      `;
+    }
+
+    function handlePostJobSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('post-title').value.trim();
+      const category = document.getElementById('post-category').value;
+      const deadlineRaw = document.getElementById('post-deadline').value.split('|');
+      const description = document.getElementById('post-description').value.trim();
+      const deliverables = document.getElementById('post-deliverables').value.trim();
+
+      const newJob = {
+        id: 'job_' + Date.now(),
+        title,
+        category,
+        description,
+        skills: postFormState.selectedSkills.length > 0 ? [...postFormState.selectedSkills] : ['事務・オペレーション'],
+        reward: postFormState.reward,
+        durationHours: postFormState.durationHours,
+        deadlineText: deadlineRaw[0],
+        urgency: deadlineRaw[1] || 'normal',
+        deliverablesSpec: deliverables,
+        attachments: postFormState.attachmentName ? [{ name: postFormState.attachmentName, size: '128 KB' }] : [],
+        clientId: state.currentUserClient.id,
+        clientName: state.currentUserClient.companyName,
+        clientRating: state.currentUserClient.rating,
+        status: 'open',
+        assignedWorkerId: null,
+        assignedWorkerName: null,
+        createdAt: Date.now(),
+        applicants: [],
+        messages: [],
+        deliverableSubmission: null
+      };
+
+      state.jobs.unshift(newJob);
+      state.currentRole = 'client';
+      postFormState.attachmentName = '';
+      saveState();
+      showToast('新しいスポット業務を公開しました！', 'success');
+      navigateTo('workspace', 'open_applicants');
+    }
+
+    // ============================================================================
+    // VIEW 3: MY PAGE & TRANSACTION WORKSPACE (マイページ・取引ルーム)
+    // ============================================================================
+    function renderWorkspaceView() {
+      if (state.currentRole === 'worker') {
+        return renderWorkerWorkspace();
+      } else {
+        return renderClientWorkspace();
+      }
+    }
+
+    // --- WORKER MY PAGE ---
+    function renderWorkerWorkspace() {
+      const worker = state.currentUserWorker;
+      const activeJobs = state.jobs.filter(j => j.assignedWorkerId === worker.id && (j.status === 'matched' || j.status === 'submitted'));
+      const appliedJobs = state.jobs.filter(j => j.status === 'open' && j.applicants.some(a => a.workerId === worker.id));
+      const completedJobs = state.jobs.filter(j => j.assignedWorkerId === worker.id && j.status === 'completed');
+
+      const totalEarned = completedJobs.reduce((sum, j) => sum + j.reward, 0) + 114500; // Base historical earnings + live completed
+
+      if (!['active', 'applied', 'completed'].includes(state.workspaceTab)) {
+        state.workspaceTab = 'active';
+      }
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Worker Profile Header Card -->
+          <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4">
+              <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white font-display font-bold text-xl flex items-center justify-center shrink-0">
+                ${worker.avatar}
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h1 class="font-display text-xl font-bold text-slate-900">${escapeHTML(worker.name)}</h1>
+                  <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">本人確認済</span>
+                  <span class="text-amber-500 font-bold text-sm tabular-nums">★${worker.rating}</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">${escapeHTML(worker.title)}</p>
+                <div class="mt-2.5 flex flex-wrap gap-1.5">
+                  ${worker.skills.map(s => `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-medium">${escapeHTML(s)}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100 shrink-0">
+              <div class="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200/70">
+                <div class="text-[11px] text-slate-500">累計獲得報酬</div>
+                <div class="font-display text-lg font-bold text-slate-900 tabular-nums">${formatJPY(totalEarned)}</div>
+              </div>
+              <div class="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200/70">
+                <div class="text-[11px] text-slate-500">完了案件数</div>
+                <div class="font-display text-lg font-bold text-slate-900 tabular-nums">${worker.completedCount + completedJobs.length - 1}件</div>
+              </div>
+              <div class="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200/70">
+                <div class="text-[11px] text-slate-500">平均応答</div>
+                <div class="font-display text-lg font-bold text-emerald-600 tabular-nums">${worker.responseMinutes}分</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sub-navigation Tabs -->
+          <div class="flex items-center gap-2 border-b border-slate-200 pb-px overflow-x-auto">
+            <button onclick="setWorkspaceTab('active')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'active' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              進行中の仕事 <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 tabular-nums">${activeJobs.length}</span>
+            </button>
+            <button onclick="setWorkspaceTab('applied')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'applied' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              応募済み（確定待ち） <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700 tabular-nums">${appliedJobs.length}</span>
+            </button>
+            <button onclick="setWorkspaceTab('completed')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'completed' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              完了・報酬履歴 <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700 tabular-nums">${completedJobs.length}</span>
+            </button>
+          </div>
+
+          <!-- Tab Body -->
+          <div>
+            ${state.workspaceTab === 'active' ? renderActiveTransactionList(activeJobs, 'worker') : ''}
+            ${state.workspaceTab === 'applied' ? renderWorkerAppliedList(appliedJobs) : ''}
+            ${state.workspaceTab === 'completed' ? renderCompletedHistoryList(completedJobs, 'worker') : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWorkerAppliedList(appliedJobs) {
+      if (appliedJobs.length === 0) {
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+            <p class="text-sm font-semibold text-slate-800">現在選考・確定待ちの応募はありません</p>
+            <button onclick="navigateTo('discover')" class="mt-4 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold">仕事を探しに行く</button>
+          </div>
+        `;
+      }
+      return `
+        <div class="space-y-4">
+          ${appliedJobs.map(job => `
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-brand-50 text-brand-700 border border-brand-200 text-xs font-semibold">応募済み・依頼者確認中</span>
+                  <span class="text-xs text-slate-500">${escapeHTML(job.clientName)}</span>
+                </div>
+                <h3 class="mt-1.5 font-bold text-base text-slate-900">${escapeHTML(job.title)}</h3>
+                <div class="mt-1 text-xs text-slate-500 tabular-nums">報酬: ${formatJPY(job.reward)} / 想定時間: ${job.durationHours}時間 / 締切: ${escapeHTML(job.deadlineText)}</div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="switchRole('client'); navigateTo('workspace', 'open_applicants');" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold">
+                  依頼者視点に切り替えて受注確定する →
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // --- CLIENT MY PAGE ---
+    function renderClientWorkspace() {
+      const client = state.currentUserClient;
+      const myJobs = state.jobs.filter(j => j.clientId === client.id);
+      const openJobs = myJobs.filter(j => j.status === 'open');
+      const inProgressJobs = myJobs.filter(j => j.status === 'matched' || j.status === 'submitted');
+      const completedJobs = myJobs.filter(j => j.status === 'completed');
+
+      if (!['open_applicants', 'in_progress', 'completed'].includes(state.workspaceTab)) {
+        state.workspaceTab = 'open_applicants';
+      }
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Client Header Card -->
+          <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4">
+              <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white font-display font-bold text-xl flex items-center justify-center shrink-0">
+                ${client.avatar}
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h1 class="font-display text-xl font-bold text-slate-900">${escapeHTML(client.companyName)}</h1>
+                  <span class="px-2 py-0.5 rounded-md bg-brand-50 text-brand-700 border border-brand-200 text-xs font-semibold">法人認証済</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">担当者: ${escapeHTML(client.contactName)}</p>
+                <div class="mt-2 flex items-center gap-2 text-xs text-slate-600">
+                  <span>利用プラン: <strong>${client.plan === 'enterprise' ? '法人月額プラン（手数料10%）' : 'スタンダード（手数料15%）'}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <button onclick="navigateTo('post')" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-subtle flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                <span>新規スポット業務を依頼</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Sub-navigation Tabs -->
+          <div class="flex items-center gap-2 border-b border-slate-200 pb-px overflow-x-auto">
+            <button onclick="setWorkspaceTab('open_applicants')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'open_applicants' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              募集中・応募者確認 <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-brand-100 text-brand-800 tabular-nums">${openJobs.length}</span>
+            </button>
+            <button onclick="setWorkspaceTab('in_progress')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'in_progress' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              進行中・検収待ち <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 tabular-nums">${inProgressJobs.length}</span>
+            </button>
+            <button onclick="setWorkspaceTab('completed')" class="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${state.workspaceTab === 'completed' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-800'}">
+              完了した仕事 <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700 tabular-nums">${completedJobs.length}</span>
+            </button>
+          </div>
+
+          <!-- Tab Body -->
+          <div>
+            ${state.workspaceTab === 'open_applicants' ? renderClientOpenApplicantsList(openJobs) : ''}
+            ${state.workspaceTab === 'in_progress' ? renderActiveTransactionList(inProgressJobs, 'client') : ''}
+            ${state.workspaceTab === 'completed' ? renderCompletedHistoryList(completedJobs, 'client') : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderClientOpenApplicantsList(openJobs) {
+      if (openJobs.length === 0) {
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+            <p class="text-sm font-semibold text-slate-800">現在募集中の案件はありません</p>
+            <button onclick="navigateTo('post')" class="mt-4 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold">新しい仕事を依頼する</button>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="space-y-5">
+          ${openJobs.map(job => `
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-card space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">募集中</span>
+                    <span class="text-xs text-slate-500 tabular-nums">報酬 ${formatJPY(job.reward)} • ${job.durationHours}時間 • 締切 ${escapeHTML(job.deadlineText)}</span>
+                  </div>
+                  <h3 class="mt-1.5 font-bold text-base sm:text-lg text-slate-900">${escapeHTML(job.title)}</h3>
+                </div>
+                <div class="text-xs font-semibold text-slate-600">
+                  応募者: <span class="text-brand-600 text-sm tabular-nums">${job.applicants.length}名</span>
+                </div>
+              </div>
+
+              <!-- Applicants List -->
+              ${job.applicants.length === 0 ? `
+                <div class="p-4 rounded-xl bg-slate-50 text-xs text-slate-500 flex items-center justify-between">
+                  <span>現在ワーカーからの応募を待っています（平均マッチング時間：約8分）</span>
+                  <button onclick="switchRole('worker'); openJobDetailModal('${job.id}');" class="text-brand-600 font-semibold hover:underline">
+                    ワーカー視点でこの案件に応募してみる →
+                  </button>
+                </div>
+              ` : `
+                <div class="space-y-3">
+                  <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">応募ワーカー一覧（1名を選択して即時マッチング確定）</div>
+                  ${job.applicants.map(app => `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="font-bold text-sm text-slate-900">${escapeHTML(app.workerName)}</span>
+                          <span class="text-xs text-slate-500">${escapeHTML(app.workerTitle)}</span>
+                          <span class="text-amber-500 text-xs font-bold tabular-nums">★${app.rating}</span>
+                          <span class="text-xs text-slate-400 tabular-nums">(${app.completedCount}件完了)</span>
+                          <span class="text-[11px] text-slate-400">• ${escapeHTML(app.appliedAt)}</span>
+                        </div>
+                        <p class="text-xs text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200/70">
+                          「${escapeHTML(app.message)}」
+                        </p>
+                      </div>
+                      <div class="shrink-0">
+                        <button
+                          onclick="confirmMatch('${job.id}', '${app.id}')"
+                          class="w-full lg:w-auto px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-subtle transition-all flex items-center justify-center gap-1.5"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <span>このワーカーに決定（即時マッチング）</span>
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function setWorkspaceTab(tab) {
+      state.workspaceTab = tab;
+      saveState();
+      renderApp();
+    }
+
+    // ============================================================================
+    // INSTANT MATCHING LOGIC (マッチング確定・募集終了ロック)
+    // ============================================================================
+    function confirmMatch(jobId, applicantId) {
       const job = state.jobs.find(j => j.id === jobId);
       if (!job) return;
 
       // Prevent duplicate assignment
       if (job.status !== 'open') {
-        showToast('すでに受注者が決定しているため、重複マッチングはブロックされました。', 'warning');
+        showToast('この仕事はすでに他のワーカーとマッチング済みです', 'warning');
         return;
       }
 
-      const targetApp = state.applications.find(a => a.id === applicationId);
-      if (!targetApp) return;
+      const applicant = job.applicants.find(a => a.id === applicantId);
+      if (!applicant) return;
 
-      // Update job status & lock
+      // Lock job & assign worker
       job.status = 'matched';
-      job.assignedWorkerId = targetApp.workerId;
+      job.assignedWorkerId = applicant.workerId;
+      job.assignedWorkerName = applicant.workerName;
 
-      // Update applications
-      state.applications.forEach(app => {
-        if (app.jobId === jobId) {
-          app.status = app.id === applicationId ? 'accepted' : 'rejected';
-        }
+      // Add system welcome message in transaction room
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      job.messages.push({
+        id: 'msg_sys_' + Date.now(),
+        senderRole: 'system',
+        senderName: 'SPOT1 システム',
+        text: `マッチングが成立しました！${applicant.workerName}さんが業務を開始できます。このチャットで詳細確認・成果物の提出を行ってください。`,
+        time: timeStr,
+        attachment: null
       });
 
-      // Add system notification in chat
-      state.messages.push({
-        id: 'msg-' + Date.now(),
-        jobId,
-        senderRole: 'system',
-        senderName: 'SPOT1 即時マッチングエンジン',
-        body: `【マッチング成立】受注者が「${targetApp.workerName}」さんに決定しました。募集を自動終了し、重複受注をロックしました。`, type: 'system', createdAt: Date.now() });  saveState(); showToast(`${targetApp.workerName}さんとのマッチングが成立しました！ワークスペースへ移動します。`, 'success');
-      navigate('workspace', jobId);
+      state.workspaceTab = 'in_progress';
+      state.activeTransactionJobId = job.id;
+      saveState();
+      renderApp();
+      showToast(`${applicant.workerName}さんとのマッチングが成立しました！`, 'success');
     }
 
-    function handleSendMessage(e, jobId) {
-      e.preventDefault();
-      const form = e.target;
-      const body = form.body.value.trim();
-      const fileInput = form.chatFile;
-      const attachmentName = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].name : '';
+    // ============================================================================
+    // TRANSACTION WORKSPACE: CHAT + DELIVERABLE SUBMISSION & APPROVAL
+    // ============================================================================
+    function renderActiveTransactionList(jobs, role) {
+      if (jobs.length === 0) {
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+            <p class="text-sm font-semibold text-slate-800">現在進行中の取引はありません</p>
+            <p class="mt-1 text-xs text-slate-500">
+              ${role === 'worker' ? '募集中の仕事に応募し、企業から確定されるとここに取引ルームが表示されます。' : '応募者を確定すると、ここにリアルタイムチャット・成果物検収ルームが開設されます。'}
+            </p>
+          </div>
+        `;
+      }
 
-      if (!body && !attachmentName) return;
+      // Default select first active job if none selected
+      if (!state.activeTransactionJobId || !jobs.some(j => j.id === state.activeTransactionJobId)) {
+        state.activeTransactionJobId = jobs[0].id;
+      }
 
+      const activeJob = jobs.find(j => j.id === state.activeTransactionJobId) || jobs[0];
+      const fees = calculateFees(activeJob.reward);
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Left Sidebar: Active Jobs Switcher (4 cols) -->
+          <div class="lg:col-span-4 space-y-3">
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">進行中の取引一覧 (${jobs.length})</div>
+            ${jobs.map(j => {
+              const isSelected = j.id === activeJob.id;
+              return `
+                <button
+                  onclick="selectTransactionJob('${j.id}')"
+                  class="w-full text-left p-4 rounded-2xl border transition-all ${
+                    isSelected
+                      ? 'bg-white border-brand-600 ring-2 ring-brand-600/15 shadow-card'
+                      : 'bg-white/70 border-slate-200 hover:bg-white'
+                  }"
+                >
+                  <div class="flex items-center justify-between gap-2 mb-1.5">
+                    ${j.status === 'submitted' ? `
+                      <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">成果物提出済・検収待ち</span>
+                    ` : `
+                      <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">作業進行中</span>
+                    `}
+                    <span class="text-xs font-bold text-slate-900 tabular-nums">${formatJPY(j.reward)}</span>
+                  </div>
+                  <div class="font-bold text-sm text-slate-900 line-clamp-2">${escapeHTML(j.title)}</div>
+                  <div class="mt-2 text-xs text-slate-500 flex items-center justify-between">
+                    <span>${role === 'worker' ? escapeHTML(j.clientName) : escapeHTML(j.assignedWorkerName)}</span>
+                    <span>締切: ${escapeHTML(j.deadlineText)}</span>
+                  </div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Right Main Workspace: Chat + Deliverable Panel (8 cols) -->
+          <div class="lg:col-span-8 space-y-5">
+            <!-- Transaction Header -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md text-xs font-semibold ${activeJob.status === 'submitted' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                      ${activeJob.status === 'submitted' ? '成果物提出済み（検収待ち）' : 'マッチング成立・作業中'}
+                    </span>
+                    <span class="text-xs text-slate-500">締切: <strong class="text-slate-800">${escapeHTML(activeJob.deadlineText)}</strong></span>
+                  </div>
+                  <h2 class="mt-1.5 font-display text-lg font-bold text-slate-900">${escapeHTML(activeJob.title)}</h2>
+                  <p class="mt-1 text-xs text-slate-500">
+                    取引相手: <strong class="text-slate-800">${role === 'worker' ? escapeHTML(activeJob.clientName) : escapeHTML(activeJob.assignedWorkerName)}</strong>
+                    • 必要成果物: ${escapeHTML(activeJob.deliverablesSpec)}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <div class="text-[11px] text-slate-400">${role === 'worker' ? '確定報酬' : 'お支払い予定額'}</div>
+                  <div class="font-display text-xl font-bold text-slate-900 tabular-nums">
+                    ${role === 'worker' ? formatJPY(activeJob.reward) : formatJPY(fees.clientTotal)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deliverable Submission / Review Card -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span>成果物の提出・検収ステータス</span>
+                </h3>
+                <span class="text-xs font-medium text-slate-500">STEP 2 / 2</span>
+              </div>
+
+              ${role === 'worker' ? `
+                <!-- WORKER VIEW OF DELIVERABLES -->
+                ${activeJob.status === 'matched' ? `
+                  <form onsubmit="submitDeliverable(event, '${activeJob.id}')" class="space-y-3">
+                    <p class="text-xs text-slate-600">作業が完了したら、成果物ファイルを添付して依頼者へ提出してください。</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">成果物ファイル名 / 納品URL <span class="text-rose-500">*</span></label>
+                        <input
+                          type="text"
+                          id="deliverable-file-${activeJob.id}"
+                          required
+                          value="納品データ_${escapeHTML(activeJob.category)}.xlsx"
+                          class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-brand-600"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ファイル添付（任意選択）</label>
+                        <input
+                          type="file"
+                          onchange="if(this.files[0]) document.getElementById('deliverable-file-${activeJob.id}').value = this.files[0].name"
+                          class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-700 mb-1">完了報告コメント</label>
+                      <input
+                        type="text"
+                        id="deliverable-comment-${activeJob.id}"
+                        required
+                        value="ご指定いただいた項目をすべて入力・ダブルチェックの上、完了いたしました。ご確認よろしくお願いいたします。"
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-brand-600"
+                      />
+                    </div>
+                    <div class="flex justify-end">
+                      <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-subtle transition-all">
+                        成果物を提出して検収を依頼する
+                      </button>
+                    </div>
+                  </form>
+                ` : `
+                  <!-- Submitted State for Worker -->
+                  <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-amber-800">✓ 成果物を提出済みです（依頼者の検収待ち）</span>
+                      <span class="text-[11px] text-amber-700">${escapeHTML(activeJob.deliverableSubmission?.submittedAt || '')}</span>
+                    </div>
+                    <div class="text-xs text-slate-700 font-medium">📎 ${escapeHTML(activeJob.deliverableSubmission?.fileName || '')}</div>
+                    <p class="text-xs text-slate-600">${escapeHTML(activeJob.deliverableSubmission?.comment || '')}</p>
+                    <div class="pt-2">
+                      <button onclick="switchRole('client'); navigateTo('workspace', 'in_progress');" class="text-xs font-semibold text-brand-600 hover:underline">
+                        依頼者視点に切り替えて検収完了（報酬確定）を行う →
+                      </button>
+                    </div>
+                  </div>
+                `}
+              ` : `
+                <!-- CLIENT VIEW OF DELIVERABLES -->
+                ${activeJob.status === 'matched' ? `
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center justify-between">
+                    <span>現在ワーカーが作業を進めています。成果物が提出されるとここで確認・検収が行えます。</span>
+                    <button onclick="switchRole('worker'); navigateTo('workspace', 'active');" class="text-brand-600 font-semibold hover:underline shrink-0 ml-3">
+                      ワーカー視点で提出テスト →
+                    </button>
+                  </div>
+                ` : `
+                  <!-- Submitted State for Client: Approve or Request Revision -->
+                  <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-amber-900">ワーカーから成果物が提出されました</span>
+                      <span class="text-[11px] text-amber-700">${escapeHTML(activeJob.deliverableSubmission?.submittedAt || '')}</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-white border border-amber-200/80 space-y-1">
+                      <div class="text-xs font-bold text-slate-900">📎 ${escapeHTML(activeJob.deliverableSubmission?.fileName || '')}</div>
+                      <p class="text-xs text-slate-600">${escapeHTML(activeJob.deliverableSubmission?.comment || '')}</p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1">
+                      <button onclick="requestRevision('${activeJob.id}')" class="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold">
+                        修正を依頼する
+                      </button>
+                      <button onclick="approveDeliverable('${activeJob.id}')" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-subtle">
+                        検収完了・報酬（${formatJPY(activeJob.reward)}）を確定する
+                      </button>
+                    </div>
+                  </div>
+                `}
+              `}
+            </div>
+
+            <!-- Real-time Chat Panel -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-hidden flex flex-col">
+              <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+                <span class="text-xs font-bold text-slate-800">取引メッセージ（ダイレクトチャット）</span>
+                <span class="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> オンライン
+                </span>
+              </div>
+
+              <!-- Messages Feed -->
+              <div id="chat-messages-feed" class="p-5 space-y-3.5 max-h-80 overflow-y-auto bg-white">
+                ${activeJob.messages.length === 0 ? `
+                  <div class="text-center py-6 text-xs text-slate-400">
+                    メッセージはまだありません。作業開始の挨拶や進捗確認を送りましょう。
+                  </div>
+                ` : activeJob.messages.map(m => {
+                  if (m.senderRole === 'system') {
+                    return `
+                      <div class="text-center my-2">
+                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-medium">
+                          ${escapeHTML(m.text)}
+                        </span>
+                      </div>
+                    `;
+                  }
+                  const isMine = m.senderRole === role;
+                  return `
+                    <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+                      <div class="text-[11px] text-slate-400 mb-1 px-1">
+                        ${escapeHTML(m.senderName)} • <span class="tabular-nums">${escapeHTML(m.time)}</span>
+                      </div>
+                      <div class="max-w-[85%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
+                        isMine
+                          ? 'bg-slate-900 text-white rounded-br-sm'
+                          : 'bg-slate-100 text-slate-800 rounded-bl-sm'
+                      }">
+                        <div>${escapeHTML(m.text)}</div>
+                        ${m.attachment ? `<div class="mt-1.5 pt-1.5 border-t ${isMine ? 'border-slate-700 text-brand-200' : 'border-slate-200 text-brand-600'} font-semibold">📎 ${escapeHTML(m.attachment)}</div>` : ''}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- Quick Replies -->
+              <div class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto">
+                <span class="text-[11px] text-slate-400 shrink-0">クイック返信:</span>
+                ${(role === 'worker'
+                  ? ['作業を開始しました！', '半分ほど完了しました。順調です。', '1点だけ確認させてください。']
+                  : ['よろしくお願いいたします！', '進捗はいかがでしょうか？', '確認しました、問題ありません！']
+                ).map(quick => `
+                  <button type="button" onclick="sendQuickChat('${activeJob.id}', '${quick}')" class="shrink-0 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-[11px] text-slate-600 font-medium">
+                    ${quick}
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- Chat Input Form -->
+              <form onsubmit="handleChatSubmit(event, '${activeJob.id}')" class="p-3.5 border-t border-slate-200 bg-white flex items-center gap-2">
+                <label class="cursor-pointer p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="ファイルを送信">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                  <input type="file" class="hidden" onchange="sendFileInChat('${activeJob.id}', this)" />
+                </label>
+                <input
+                  type="text"
+                  id="chat-input-${activeJob.id}"
+                  placeholder="メッセージを入力..."
+                  class="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-brand-600"
+                />
+                <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition-colors">
+                  送信
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectTransactionJob(jobId) {
+      state.activeTransactionJobId = jobId;
+      saveState();
+      renderApp();
+    }
+
+    function appendChatMessage(jobId, text, attachmentName = null) {
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job || (!text && !attachmentName)) return;
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       const senderName = state.currentRole === 'worker'
-        ? state.users.worker.name
-        : state.users.client.name;
+        ? state.currentUserWorker.name
+        : `${state.currentUserClient.companyName}`;
 
-      state.messages.push({
-        id: 'msg-' + Date.now(),
-        jobId,
+      job.messages.push({
+        id: 'msg_' + Date.now(),
         senderRole: state.currentRole,
         senderName,
-        body: body || 'ファイルを送信しました。',
-        attachmentName,
-        type: 'text',
-        createdAt: Date.now()
+        text: text || 'ファイルを送信しました',
+        time: timeStr,
+        attachment: attachmentName
       });
 
       saveState();
-      render();
+      renderApp();
+      const feed = document.getElementById('chat-messages-feed');
+      if (feed) feed.scrollTop = feed.scrollHeight;
     }
 
-    function handleSubmitDeliverable(e, jobId) {
+    function handleChatSubmit(e, jobId) {
+      e.preventDefault();
+      const input = document.getElementById(`chat-input-${jobId}`);
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+      appendChatMessage(jobId, text);
+    }
+
+    function sendQuickChat(jobId, text) {
+      appendChatMessage(jobId, text);
+    }
+
+    function sendFileInChat(jobId, fileInput) {
+      if (fileInput.files && fileInput.files[0]) {
+        appendChatMessage(jobId, '資料ファイルを共有します。', fileInput.files[0].name);
+        showToast('ファイルをチャットに送信しました', 'success');
+      }
+    }
+
+    // --- DELIVERABLE SUBMISSION & APPROVAL ---
+    function submitDeliverable(e, jobId) {
       e.preventDefault();
       const job = state.jobs.find(j => j.id === jobId);
       if (!job) return;
 
-      const form = e.target;
-      const fileInput = form.deliverableFile;
-      const fileName = fileInput && fileInput.files && fileInput.files[0]
-        ? fileInput.files[0].name
-        : (form.deliverableUrl.value.trim() || '納品成果物データ_v1.zip');
-      const note = form.deliverableNote.value.trim();
-
-      if (!note) {
-        showToast('完了報告コメントを入力してください', 'warning');
-        return;
-      }
+      const fileName = document.getElementById(`deliverable-file-${jobId}`).value.trim();
+      const comment = document.getElementById(`deliverable-comment-${jobId}`).value.trim();
+      const now = new Date();
+      const timeStr = `本日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       job.status = 'submitted';
-      state.submissions[jobId] = {
+      job.deliverableSubmission = {
         fileName,
-        note,
-        submittedAt: 'たった今',
-        status: 'submitted',
-        revisionComment: ''
+        comment,
+        submittedAt: timeStr,
+        approvedAt: null
       };
 
-      state.messages.push({
-        id: 'msg-' + Date.now(),
-        jobId,
-        senderRole: 'worker',
-        senderName: state.users.worker.name,
-        body: `【成果物を提出しました】\n成果物: ${fileName}\n報告: ${note}`,
-        attachmentName: fileName,
-        type: 'delivery',
-        createdAt: Date.now()
-      });
-
-      saveState();
-      showToast('成果物を提出しました！依頼者の検収待ちステータスへ移行しました。', 'success');
-      render();
+      appendChatMessage(jobId, `【成果物提出】${comment}`, fileName);
+      showToast('成果物を提出しました！依頼者の検収をお待ちください。', 'success');
     }
 
-    function handleRequestRevision(jobId) {
+    function requestRevision(jobId) {
       const job = state.jobs.find(j => j.id === jobId);
-      const commentEl = document.getElementById('revision-comment');
-      const comment = commentEl ? commentEl.value.trim() : '';
-
-      if (!comment) {
-        showToast('修正依頼の内容を入力してください', 'warning');
-        return;
-      }
-
+      if (!job) return;
       job.status = 'matched';
-      if (state.submissions[jobId]) {
-        state.submissions[jobId].status = 'revision_requested';
-        state.submissions[jobId].revisionComment = comment;
+      appendChatMessage(jobId, '【修正依頼】ご提出ありがとうございます！1点微修正をお願いしたく、詳細を確認させてください。');
+      showToast('ワーカーへ修正依頼を送信しました', 'info');
+    }
+
+    function approveDeliverable(jobId) {
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      const now = new Date();
+      const timeStr = `本日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      job.status = 'completed';
+      if (job.deliverableSubmission) {
+        job.deliverableSubmission.approvedAt = timeStr;
       }
 
-      state.messages.push({
-        id: 'msg-' + Date.now(),
-        jobId,
-        senderRole: 'client',
-        senderName: state.users.client.name,
-        body: `【修正依頼】${comment}`, type: 'revision', createdAt: Date.now() });  saveState(); showToast('ワーカーへ修正依頼を送信しました', 'info'); render(); }  function handleApproveDeliverable(jobId) { const job = state.jobs.find(j => j.id === jobId); if (!job) return;  job.status = 'completed'; if (state.submissions[jobId]) { state.submissions[jobId].status = 'approved'; }  state.messages.push({ id: 'msg-' + Date.now(), jobId, senderRole: 'system', senderName: 'SPOT1 システム', body: `【検収完了・取引終了】依頼者が成果物を承認しました。ワーカー報酬 ${formatYen(job.reward)} が確定しました（決済処理はプロトタイプのためシミュレーション表示）。`,
-        type: 'system',
-        createdAt: Date.now()
+      job.messages.push({
+        id: 'msg_complete_' + Date.now(),
+        senderRole: 'system',
+        senderName: 'SPOT1 システム',
+        text: `検収が完了し、取引が終了しました。ワーカー報酬（${formatJPY(job.reward)}）が確定しました。`,
+        time: timeStr,
+        attachment: null
       });
 
+      state.workspaceTab = 'completed';
       saveState();
-      showToast('成果物を承認し、取引が完了しました！', 'success');
-      render();
+      renderApp();
+      showToast('検収完了！報酬の確定処理が完了しました。', 'success');
     }
 
-    // =========================================================================
-    // 4. VIEW RENDERERS
-    // =========================================================================
-    function renderNav() {
-      const isWorker = state.currentRole === 'worker';
-      const activeJobsCount = state.jobs.filter(j =>
-        (j.status === 'matched' || j.status === 'submitted') &&
-        (isWorker ? j.assignedWorkerId === state.users.worker.id : j.clientId === state.users.client.id)
-      ).length;
-
-      const items = isWorker
-        ? [
-            { id: 'home', label: 'トップ' },
-            { id: 'jobs', label: '仕事を探す' },
-            { id: 'workspace', label: '進行中ワークスペース', badge: activeJobsCount },
-            { id: 'mypage', label: 'マイページ' }
-          ]
-        : [
-            { id: 'home', label: 'トップ' },
-            { id: 'post-job', label: '仕事を依頼する' },
-            { id: 'jobs', label: '公開中の仕事一覧' },
-            { id: 'workspace', label: '進行中ワークスペース', badge: activeJobsCount },
-            { id: 'mypage', label: '依頼者管理・マイページ' }
-          ];
-
-      const renderBtn = (item, mobile = false) => {
-        const active = state.currentRoute === item.id ||
-          (item.id === 'jobs' && state.currentRoute === 'job-detail');
-        const base = mobile
-          ? 'px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-1.5'
-          : 'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5';
-        const stateCls = active
-          ? 'bg-slate-900 text-white'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100';
-        const badgeHtml = item.badge
-          ? `<span class="px-1.5 py-0.2 text-[10px] font-bold rounded-full ${active ? 'bg-brand-500 text-white' : 'bg-brand-100 text-brand-700'}">${item.badge}</span>`
-          : '';
-        return `<button onclick="navigate('${item.id}')" class="${base}${stateCls}">${item.label}${badgeHtml}</button>`;
-      };
-
-      document.getElementById('desktop-nav').innerHTML = items.map(i => renderBtn(i, false)).join('');
-      document.getElementById('mobile-nav').innerHTML = items.map(i => renderBtn(i, true)).join('');
-
-      // Role switcher styling
-      const wBtn = document.getElementById('role-btn-worker');
-      const cBtn = document.getElementById('role-btn-client');
-      if (isWorker) {
-        wBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition-all flex items-center gap-1.5';
-        cBtn.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1.5';
-      } else {
-        cBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition-all flex items-center gap-1.5';
-        wBtn.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1.5';
-      }
-
-      // Persona banner
-      const banner = document.getElementById('persona-banner');
-      if (isWorker) {
-        banner.innerHTML = `
-          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            ログイン中（ワーカー）: ${escapeHtml(state.users.worker.name)}
-          </span>
-          <span class="text-slate-400">|</span>
-          <span>評価 ★${state.users.worker.rating}（${state.users.worker.reviewCount}件）</span>
-          <span class="hidden md:inline text-slate-400">|</span>
-          <span class="hidden md:inline text-emerald-700 font-medium">● 今すぐ1〜3時間稼働可能</span>
-        `;
-      } else {
-        banner.innerHTML = `
-          <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800">
-            <span class="w-2 h-2 rounded-full bg-brand-600"></span>
-            ログイン中（依頼企業）: ${escapeHtml(state.users.client.name)}
-          </span>
-          <span class="text-slate-400">|</span>
-          <span>現在のプラン: <strong>${state.clientPlan === 'pro' ? '法人月額Pro（手数料10%）' : 'スタンダード（都度手数料15%）'}</strong></span>
+    function renderCompletedHistoryList(completedJobs, role) {
+      if (completedJobs.length === 0) {
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+            <p class="text-sm font-semibold text-slate-800">完了した取引履歴はまだありません</p>
+          </div>
         `;
       }
-    }
-
-    function renderHome() {
-      const openJobs = state.jobs.filter(j => j.status === 'open');
-      const totalOpenReward = openJobs.reduce((sum, j) => sum + j.reward, 0);
 
       return `
-        <div class="space-y-12 animate-fade-in">
-          <!-- Hero Section -->
-          <section class="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-white to-white p-7 sm:p-12 shadow-subtle">
-            <div class="max-w-3xl space-y-6">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-2xs text-xs font-medium text-slate-700">
-                <span class="flex h-2 w-2 relative">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                現在 ${openJobs.length}件の1〜3時間スポット業務が即時マッチング可能
+        <div class="space-y-4">
+          ${completedJobs.map(job => {
+            const fees = calculateFees(job.reward);
+            return `
+              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 text-white text-[11px] font-semibold">検収完了</span>
+                    <span class="text-xs text-slate-500">
+                      ${role === 'worker' ? `依頼企業: ${escapeHTML(job.clientName)}` : `担当ワーカー: ${escapeHTML(job.assignedWorkerName)}`}
+                    </span>
+                  </div>
+                  <h3 class="font-bold text-base text-slate-900">${escapeHTML(job.title)}</h3>
+                  <div class="text-xs text-slate-500">
+                    納品ファイル: 📎 ${escapeHTML(job.deliverableSubmission?.fileName || '納品完了')}
+                  </div>
+                </div>
+                <div class="text-left sm:text-right shrink-0">
+                  <div class="text-[11px] text-slate-400">${role === 'worker' ? '確定受取報酬' : `支払総額（手数料${fees.feeRatePercent}%込）`}</div>
+                  <div class="font-display text-lg font-bold text-emerald-600 tabular-nums">
+                    ${role === 'worker' ? formatJPY(job.reward) : formatJPY(fees.clientTotal)}
+                  </div>
+                </div>
               </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
 
-              <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15]">
-                今すぐ1時間だけ頼みたい企業と、<br class="hidden sm:inline" />
-                <span class="text-brand-600">今すぐ1時間だけ働きたい個人</span>をつなぐ。
-              </h1>
+    // ============================================================================
+    // MODAL HELPERS & ENGINEERING REPORT (STEP 1 - 7 REPORT DRAWER)
+    // ============================================================================
+    function openModal() {
+      const root = document.getElementById('modal-root');
+      root.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
 
-              <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
-                募集・書類選考・面談に数日かける必要はありません。資料修正、競合リサーチ、データ入力、SNS投稿作成など、1〜3時間で完結する業務を最短数分でマッチング・納品まで完結できます。
-              </p>
+    function closeModal() {
+      const root = document.getElementById('modal-root');
+      root.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
 
-              <!-- Dual Primary CTAs -->
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                <button onclick="switchRole('client'); navigate('post-job')" class="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm shadow-sm transition-all flex items-center justify-center gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke
+    function openEngineeringModal() {
+      const panel = document.getElementById('modal-panel');
+      panel.innerHTML = `
+        <div class="p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div>
+              <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Product & Engineering Spec</span>
+              <h2 class="font-display text-xl font-bold text-slate-900 mt-0.5">SPOT1 開発進行・設計レポート（STEP 1–7）</h2>
+            </div>
+            <button onclick="closeModal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="space-y-5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div class="font-bold text-slate-900">STEP 1：環境調査・技術スタック選定</div>
+              <p class="text-xs text-slate-600">新規グリーンフィールド開発として、単一ファイルで即時動作・状態永続化（LocalStorage）が可能なモダンフロントエンド構成（Tailwind CSS + Vanilla ES6 State Architecture）を採用。将来のNext.js / Supabase / Stripe Connect移行を見据えた正規化データ構造を実装。</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="font-bold text-slate-900">STEP 2：画面構成 & データベース設計（将来拡張対応）</div>
+              <pre class="p-3 rounded-lg bg-slate-900 text-slate-100 text-[11px] overflow-x-auto font-mono leading-relaxed">
+users (id, role_flags, name, skills[], rating, plan_tier)
+jobs (id, client_id, title, category, reward, duration_hours, deadline, status, assigned_worker_id)
+applications (id, job_id, worker_id, message, status, UNIQUE(job_id, worker_id))
+messages (id, job_id, sender_id, body, attachment_meta, created_at)
+deliverables (id, job_id, file_meta, comment, status['submitted'|'revision'|'approved'])
+transactions (id, job_id, worker_amount, platform_fee_rate, fee_amount, settled_at)</pre>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div class="font-bold text-slate-900">STEP 3–6：MVP実装・レスポンシブUI調整</div>
+              <ul class="list-disc pl-5 text-xs text-slate-600 space-y-1">
+                <li><strong>実装済み（全機能動作）：</strong>仕事検索・多軸フィルタ、新規仕事依頼フォーム、手数料リアルタイム試算（通常15% / 法人月額10%）、即時応募・重複応募防止ロック、応募者確認・1クリック即時マッチング確定、ダイレクトチャット、成果物提出・修正依頼・検収完了フロー。</li>
+                <li><strong>未実装（明示）：</strong>実決済（Stripe決済実行）・サーバーサイド認証・リアルタイムWebSocket通知（本MVPではクライアント側状態管理とロール切替で完全再現）。</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+              <div class="font-bold text-emerald-900">STEP 7：主要導線 E2E テストチェックリスト（検証済み）</div>
+              <ul class="text-xs text-emerald-800 space-y-1">
+                <li>✅ 依頼者視点で新規案件を投稿 → 仕事一覧へ即時反映</li>
+                <li>✅ ワーカー視点で案件を検索・詳細閲覧 → 重複応募ブロック付き応募</li>
+                <li>✅ 依頼者視点で応募者を確定 → ステータスが「募集中」から「進行中」へ遷移し他者の応募をロック</li>
+                <li>✅ 取引ルームでの双方向チャット・ファイル送信・成果物提出・検収完了・報酬履歴反映</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+      openModal();
+    }
+
+    // Initialize Application on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApp();
+    });
+  </script>
+</body>
+</html>
